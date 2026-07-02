@@ -98,6 +98,21 @@
         <!-- 2. Price -->
         <div class="field">
           <label class="field__label" for="price">새 제품 가격</label>
+
+          <!-- 신품가 자동 검색 (프록시 미설정 시 숨김) -->
+          <div class="model-search is-hidden" id="model-search">
+            <div class="model-search__row">
+              <input
+                type="search"
+                id="model-query"
+                placeholder="모델명으로 검색 (예: 삼성 RF85C)"
+                autocomplete="off"
+              />
+              <button type="button" id="model-search-btn">검색</button>
+            </div>
+            <ul class="model-search__results" id="model-results"></ul>
+          </div>
+
           <div class="input-money">
             <input
               type="text"

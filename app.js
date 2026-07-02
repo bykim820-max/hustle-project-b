@@ -2,6 +2,11 @@
    By B · Project Plan-B — core depreciation logic + UI (Toss style)
    ============================================================ */
 
+/* ---- 0. Config ---- */
+// Cloudflare Worker 프록시 URL (cloudflare-worker/naver-proxy.js 배포 후 입력).
+// 비어 있으면 신품가 자동 검색 UI가 숨겨집니다.
+const NAVER_PROXY_URL = "";
+
 /* ---- 1. Business constants ---- */
 const CATEGORIES = {
   fridge: { name: "냉장고", rate: 0.10, emoji: "🧊" },
@@ -338,6 +343,68 @@ document.getElementById("share-btn").addEventListener("click", async () => {
     showToast(ok ? "링크를 복사했어요" : "복사에 실패했어요. 주소창의 URL을 복사해 주세요.");
   }
 });
+
+/* ---- 10b. Naver shopping model search (Phase 2) ---- */
+(function initModelSearch() {
+  if (!NAVER_PROXY_URL) return; // 프록시 미배포 시 기능 비활성
+
+  const wrap = document.getElementById("model-search");
+  const queryInput = document.getElementById("model-query");
+  const searchBtn = document.getElementById("model-search-btn");
+  const resultsEl = document.getElementById("model-results");
+  wrap.classList.remove("is-hidden");
+
+  const setStatus = (msg) => {
+    resultsEl.innerHTML = msg ? `<li class="model-search__status">${msg}</li>` : "";
+  };
+
+  async function search() {
+    const q = queryInput.value.trim();
+    if (!q) return;
+    setStatus("검색 중이에요…");
+    track("model_search", { query_length: q.length });
+    try {
+      const res = await fetch(`${NAVER_PROXY_URL}?query=${encodeURIComponent(q)}`);
+      if (!res.ok) throw new Error(`proxy ${res.status}`);
+      const { items } = await res.json();
+      if (!items || !items.length) {
+        setStatus("검색 결과가 없어요. 모델명을 더 짧게 입력해 보세요.");
+        return;
+      }
+      resultsEl.innerHTML = items
+        .map(
+          (it, i) => `
+          <li>
+            <button type="button" data-price="${it.lprice}" data-i="${i}">
+              <span class="r-title">${it.title}</span>
+              <span class="r-price">${won(it.lprice)}</span>
+            </button>
+          </li>`
+        )
+        .join("");
+      resultsEl.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          priceInput.value = commas(btn.dataset.price);
+          priceInput.dispatchEvent(new Event("input"));
+          setStatus("");
+          queryInput.value = "";
+          showToast("신품 최저가를 입력했어요");
+        });
+      });
+    } catch (err) {
+      console.error(err);
+      setStatus("검색에 실패했어요. 잠시 후 다시 시도해 주세요.");
+    }
+  }
+
+  searchBtn.addEventListener("click", search);
+  queryInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // 폼 제출(시세 계산) 방지
+      search();
+    }
+  });
+})();
 
 /* ---- 11. Restore state from shared URL ---- */
 (function restoreFromUrl() {
