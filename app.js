@@ -237,3 +237,108 @@ function render({ r, price, category, years, weight }) {
   resultEl.classList.add("is-visible");
   resultEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
+
+/* ============================================================
+   동물상 테스트 (Teachable Machine image model)
+   ============================================================ */
+const TM_MODEL_URL = "https://teachablemachine.withgoogle.com/models/sTfrf9zSV/";
+const ANIMAL_INFO = {
+  강아지: { emoji: "🐶", headline: "다정한 강아지상이에요!" },
+  고양이: { emoji: "🐱", headline: "도도한 고양이상이에요!" },
+  팬더: { emoji: "🐼", headline: "귀여운 팬더상이에요!" },
+};
+
+const animalFile = document.getElementById("animal-file");
+const animalResult = document.getElementById("animal-result");
+const animalPreview = document.getElementById("animal-preview");
+const animalHeadline = document.getElementById("animal-headline");
+const animalBars = document.getElementById("animal-bars");
+const uploadText = document.getElementById("upload-text");
+
+/* 무거운 라이브러리(tfjs ~1MB)는 첫 사용 시에만 로드 */
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error(`script load failed: ${src}`));
+    document.head.appendChild(s);
+  });
+}
+
+let tmModelPromise = null;
+function getAnimalModel() {
+  if (!tmModelPromise) {
+    tmModelPromise = (async () => {
+      await loadScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.7.4/dist/tf.min.js");
+      await loadScript("https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js");
+      return tmImage.load(TM_MODEL_URL + "model.json", TM_MODEL_URL + "metadata.json");
+    })().catch((err) => {
+      tmModelPromise = null; // 실패 시 다음 시도에서 재로드
+      throw err;
+    });
+  }
+  return tmModelPromise;
+}
+
+async function analyzeAnimal(imgEl) {
+  uploadText.textContent = "분석 중이에요…";
+  try {
+    const model = await getAnimalModel();
+    const predictions = await model.predict(imgEl);
+    renderAnimalResult(predictions);
+    uploadText.textContent = "사진 올리기";
+  } catch (err) {
+    console.error(err);
+    uploadText.textContent = "분석에 실패했어요. 다시 시도해 주세요.";
+  }
+}
+
+function renderAnimalResult(predictions) {
+  const sorted = [...predictions].sort((a, b) => b.probability - a.probability);
+  const top = sorted[0];
+  const info = ANIMAL_INFO[top.className] || { emoji: "✨", headline: `${top.className}상이에요!` };
+
+  animalHeadline.textContent = `${info.emoji} ${info.headline}`;
+  animalBars.innerHTML = sorted
+    .map((p, i) => {
+      const pct = Math.round(p.probability * 100);
+      const e = (ANIMAL_INFO[p.className] || { emoji: "✨" }).emoji;
+      return `
+        <li class="${i === 0 ? "is-top" : ""}">
+          <span class="bar-label">${e} ${p.className}상</span>
+          <span class="bar-track"><span class="bar-fill" data-w="${pct}"></span></span>
+          <span class="bar-pct">${pct}%</span>
+        </li>`;
+    })
+    .join("");
+
+  animalResult.classList.remove("is-hidden");
+  animalResult.classList.remove("is-visible");
+  void animalResult.offsetWidth;
+  animalResult.classList.add("is-visible");
+
+  // width 트랜지션이 0에서 시작하도록 다음 프레임에 적용
+  requestAnimationFrame(() => {
+    animalBars.querySelectorAll(".bar-fill").forEach((el) => {
+      el.style.width = el.dataset.w + "%";
+    });
+  });
+  animalResult.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+animalFile.addEventListener("change", () => {
+  const file = animalFile.files && animalFile.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  animalPreview.onload = () => {
+    analyzeAnimal(animalPreview);
+    URL.revokeObjectURL(url);
+  };
+  animalPreview.src = url;
+});
+
+document.getElementById("animal-retry").addEventListener("click", () => {
+  animalFile.value = "";
+  animalFile.click();
+});

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>By B · 중고 가전 시세 분석기</title>
   <meta name="description" content="정률법 기반으로 중고 가전의 적정 시세를 자동 산출해 드립니다. 결혼·이사 준비의 첫 단추, By B." />
+  <meta name="google-adsense-account" content="ca-pub-9798410863522242" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9798410863522242" crossorigin="anonymous"></script>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -149,6 +151,26 @@
       <div class="breakdown-wrap">
         <h2 class="breakdown-title">계산 근거</h2>
         <ul class="breakdown" id="breakdown"></ul>
+      </div>
+    </section>
+
+    <!-- Animal face test (Teachable Machine) -->
+    <section class="animal" aria-label="동물상 테스트">
+      <span class="brand-chip">재미로 보는</span>
+      <h2 class="animal__title">나는 무슨 동물상일까?</h2>
+      <p class="animal__subtitle">얼굴 사진을 올리면 AI가 동물상을 알려드려요.<br />사진은 서버로 전송되지 않고 브라우저 안에서만 처리돼요.</p>
+
+      <label class="upload-box" for="animal-file">
+        <input type="file" id="animal-file" accept="image/*" />
+        <span class="upload-box__icon" aria-hidden="true">📷</span>
+        <span class="upload-box__text" id="upload-text">사진 올리기</span>
+      </label>
+
+      <div class="animal-result is-hidden" id="animal-result">
+        <img class="animal-result__preview" id="animal-preview" alt="업로드한 사진 미리보기" />
+        <p class="animal-result__headline" id="animal-headline"></p>
+        <ul class="animal-bars" id="animal-bars"></ul>
+        <button type="button" class="btn-retry" id="animal-retry">다른 사진으로 해보기</button>
       </div>
     </section>
 
