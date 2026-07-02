@@ -41,6 +41,160 @@ body {
   flex-direction: column;
 }
 
+/* ---------- Global nav ---------- */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0 22px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nav__logo {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--blue);
+  text-decoration: none;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+.nav a.nav__link {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-sub);
+  text-decoration: none;
+  transition: background 0.15s var(--ease-out), color 0.15s var(--ease-out);
+}
+.nav a.nav__link:hover { background: var(--fill); }
+.nav a.nav__link.is-active { background: var(--fill); color: var(--ink); }
+
+/* ---------- Sub-page prose ---------- */
+.page-hero { padding: 8px 4px 28px; }
+.page-hero .title { font-size: clamp(23px, 6vw, 28px); }
+
+.prose { font-size: 15.5px; color: var(--ink-sub); }
+.prose h2 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 36px 0 12px;
+}
+.prose h3 {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 26px 0 8px;
+}
+.prose p { margin: 10px 0; }
+.prose ul, .prose ol { margin: 10px 0 10px 22px; }
+.prose li { margin: 5px 0; }
+.prose strong { color: var(--ink); font-weight: 700; }
+.prose .callout {
+  background: var(--blue-tint);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-size: 14px;
+  color: var(--ink-sub);
+  margin: 14px 0;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 14px;
+}
+.prose th, .prose td {
+  text-align: left;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.prose th { color: var(--ink-soft); font-weight: 600; font-size: 12.5px; }
+.prose td:last-child { font-weight: 600; color: var(--ink); }
+
+/* FAQ accordion */
+.faq-item {
+  border-bottom: 1px solid var(--line);
+  padding: 4px 0;
+}
+.faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 2px;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: "";
+  width: 8px; height: 8px;
+  border-right: 2px solid var(--ink-soft);
+  border-bottom: 2px solid var(--ink-soft);
+  transform: rotate(45deg);
+  transition: transform 0.2s var(--ease-out);
+  flex-shrink: 0;
+}
+.faq-item[open] summary::after { transform: rotate(-135deg); }
+.faq-item .faq-a {
+  padding: 0 2px 16px;
+  font-size: 14.5px;
+  color: var(--ink-sub);
+}
+
+/* Content link cards (home) */
+.more-links {
+  margin-top: 44px;
+  padding-top: 36px;
+  border-top: 1px solid var(--line);
+}
+.more-links__title { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+.more-links__list {
+  list-style: none;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.more-links__list a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--fill);
+  text-decoration: none;
+  transition: background 0.15s var(--ease-out), transform 0.1s var(--ease-out);
+}
+.more-links__list a:hover { background: var(--fill-hover); }
+.more-links__list a:active { transform: scale(0.99); }
+.more-links__name { font-size: 15px; font-weight: 700; color: var(--ink); }
+.more-links__desc { display: block; font-size: 13px; font-weight: 400; color: var(--ink-soft); margin-top: 2px; }
+.more-links__arrow { color: var(--ink-faint); font-weight: 700; flex-shrink: 0; }
+
+/* Footer nav */
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-bottom: 10px;
+}
+.footer-links a {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+.footer-links a:hover { color: var(--ink-sub); text-decoration: underline; }
+
 /* ---------- Header ---------- */
 .app__header { padding: 8px 4px 32px; }
 .brand-chip {

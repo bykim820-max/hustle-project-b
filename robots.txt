@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bykim820-max.github.io/hustle-project-b/sitemap.xml
