@@ -301,6 +301,24 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Depreciation chart */
+.chart-wrap { margin-top: 32px; }
+.chart-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.chart-desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 3px;
+}
+.chart-canvas {
+  position: relative;
+  height: 220px;
+  margin-top: 14px;
+}
+
 /* Breakdown */
 .breakdown-wrap {
   margin-top: 28px;

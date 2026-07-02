@@ -136,6 +136,15 @@
         </div>
       </div>
 
+      <!-- Depreciation curve (Phase 1) -->
+      <div class="chart-wrap">
+        <h2 class="chart-title">연차별 감가 추이</h2>
+        <p class="chart-desc" id="chart-desc"></p>
+        <div class="chart-canvas">
+          <canvas id="dep-chart" aria-label="연차별 감가 추이 그래프" role="img"></canvas>
+        </div>
+      </div>
+
       <!-- Breakdown -->
       <div class="breakdown-wrap">
         <h2 class="breakdown-title">계산 근거</h2>
@@ -148,6 +157,7 @@
     </footer>
   </main>
 
-  <script src="app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+  <script defer src="app.js"></script>
 </body>
 </html>

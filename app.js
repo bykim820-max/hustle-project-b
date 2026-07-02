@@ -84,6 +84,104 @@ function countUp(el, target, duration = 640) {
   }, duration + 50);
 }
 
+/* ---- 6b. Depreciation curve (Phase 1, Chart.js) ---- */
+let depChart = null;
+
+function renderChart({ price, category, years, weight }) {
+  if (typeof Chart === "undefined") return; // CDN 로드 실패 시 차트만 생략
+
+  const values = [];
+  for (let t = 0; t <= 10; t++) {
+    values.push(calculatePrice({ price, category, years: t, weight }).final);
+  }
+  const labels = values.map((_, t) => (t === 0 ? "지금" : `${t}년`));
+  const pointRadius = values.map((_, t) => (t === years ? 6 : 3));
+  const pointBg = values.map((_, t) => (t === years ? "#3182f6" : "#ffffff"));
+
+  const csDesc = document.getElementById("chart-desc");
+  csDesc.textContent =
+    years === 0
+      ? "지금 팔 때와 앞으로 가치가 어떻게 변하는지 보여드려요."
+      : `${years}년 차인 지금이 파란 점이에요. 1년 더 쓰면 ${won(values[Math.min(years + 1, 10)])}까지 내려가요.`;
+
+  const config = {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        borderColor: "#3182f6",
+        borderWidth: 2.5,
+        pointRadius,
+        pointBackgroundColor: pointBg,
+        pointBorderColor: "#3182f6",
+        pointBorderWidth: 2,
+        tension: 0.35,
+        fill: true,
+        backgroundColor: (ctx) => {
+          const { chartArea, ctx: c } = ctx.chart;
+          if (!chartArea) return "rgba(49, 130, 246, 0.06)";
+          const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          g.addColorStop(0, "rgba(49, 130, 246, 0.14)");
+          g.addColorStop(1, "rgba(49, 130, 246, 0)");
+          return g;
+        },
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: reducedMotion.matches ? false : { duration: 480, easing: "easeOutQuart" },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "rgba(25, 31, 40, 0.9)",
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false,
+          titleFont: { family: "Pretendard Variable, Pretendard, sans-serif", weight: "600" },
+          bodyFont: { family: "Pretendard Variable, Pretendard, sans-serif", weight: "700", size: 14 },
+          callbacks: {
+            title: (items) => (items[0].dataIndex === 0 ? "미개봉 · 지금" : `${items[0].dataIndex}년 사용`),
+            label: (item) => won(item.parsed.y),
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: {
+            color: "#8b95a1",
+            font: { family: "Pretendard Variable, Pretendard, sans-serif", size: 11 },
+            maxRotation: 0,
+            autoSkipPadding: 12,
+          },
+        },
+        y: {
+          grid: { color: "#f2f4f6" },
+          border: { display: false },
+          ticks: {
+            color: "#8b95a1",
+            font: { family: "Pretendard Variable, Pretendard, sans-serif", size: 11 },
+            maxTicksLimit: 5,
+            callback: (v) => (v >= 10000 ? `${Math.round(v / 10000).toLocaleString("ko-KR")}만` : fmt(v)),
+          },
+        },
+      },
+      interaction: { mode: "index", intersect: false },
+    },
+  };
+
+  if (depChart) {
+    depChart.data = config.data;
+    depChart.options = config.options;
+    depChart.update();
+  } else {
+    depChart = new Chart(document.getElementById("dep-chart"), config);
+  }
+}
+
 /* ---- 7. Submit → calculate → render ---- */
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -103,6 +201,7 @@ form.addEventListener("submit", (e) => {
 
   const r = calculatePrice({ price, category, years, weight });
   render({ r, price, category, years, weight });
+  renderChart({ price, category, years, weight });
 });
 
 /* ---- 8. Render result ---- */
