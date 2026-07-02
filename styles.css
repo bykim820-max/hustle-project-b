@@ -329,6 +329,16 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
+.chips--cat { grid-template-columns: repeat(3, 1fr); }
+.chips--cat .chip__grade { font-size: 14px; }
+.chips--bonus { grid-template-columns: 1fr 1fr; }
+.chips--bonus .chip__grade { font-size: 13.5px; }
+.field__label-sub {
+  font-weight: 400;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  margin-left: 4px;
+}
 .chip { position: relative; cursor: pointer; }
 .chip input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
 .chip__body {
@@ -496,6 +506,46 @@ body {
 }
 .breakdown li span:first-child { color: var(--ink-sub); }
 .breakdown li span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Share button + toast */
+.btn-share {
+  width: 100%;
+  margin-top: 14px;
+  height: 50px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--mint-tint);
+  color: var(--mint-deep);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s var(--ease-out), transform 0.1s var(--ease-out);
+}
+.btn-share:hover { background: #d3f2ec; }
+.btn-share:active { transform: scale(0.98); }
+.btn-share:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%) translateY(16px);
+  background: rgba(25, 31, 40, 0.92);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+  z-index: 100;
+}
+.toast.is-show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 
 /* ---------- Footer ---------- */
 .app__footer {

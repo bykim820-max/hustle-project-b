@@ -55,20 +55,42 @@
         <!-- 1. Category -->
         <fieldset class="field">
           <legend class="field__label">어떤 제품인가요?</legend>
-          <div class="segment" role="radiogroup">
-            <label class="segment__item">
-              <input type="radio" name="category" value="major" checked />
-              <span class="segment__body">
-                <span class="segment__title">대형가전</span>
-                <span class="segment__desc">냉장고 · 세탁기 · TV</span>
-              </span>
+          <div class="chips chips--cat" role="radiogroup">
+            <label class="chip">
+              <input type="radio" name="category" value="fridge" checked />
+              <span class="chip__body"><span class="chip__grade">🧊 냉장고</span><span class="chip__desc">연 10%</span></span>
             </label>
-            <label class="segment__item">
-              <input type="radio" name="category" value="digital" />
-              <span class="segment__body">
-                <span class="segment__title">디지털기기</span>
-                <span class="segment__desc">노트북 · 태블릿 · 폰</span>
-              </span>
+            <label class="chip">
+              <input type="radio" name="category" value="washer" />
+              <span class="chip__body"><span class="chip__grade">🌀 세탁기</span><span class="chip__desc">연 12%</span></span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="category" value="aircon" />
+              <span class="chip__body"><span class="chip__grade">❄️ 에어컨</span><span class="chip__desc">연 11%</span></span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="category" value="tv" />
+              <span class="chip__body"><span class="chip__grade">📺 TV</span><span class="chip__desc">연 15%</span></span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="category" value="laptop" />
+              <span class="chip__body"><span class="chip__grade">💻 노트북</span><span class="chip__desc">연 20%</span></span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="category" value="phone" />
+              <span class="chip__body"><span class="chip__grade">📱 스마트폰</span><span class="chip__desc">연 25%</span></span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="category" value="tablet" />
+              <span class="chip__body"><span class="chip__grade">📟 태블릿</span><span class="chip__desc">연 18%</span></span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="category" value="console" />
+              <span class="chip__body"><span class="chip__grade">🎮 게임기</span><span class="chip__desc">연 15%</span></span>
+            </label>
+            <label class="chip">
+              <input type="radio" name="category" value="etc" />
+              <span class="chip__body"><span class="chip__grade">🔌 기타 가전</span><span class="chip__desc">연 14%</span></span>
             </label>
           </div>
         </fieldset>
@@ -115,24 +137,45 @@
           <legend class="field__label">상태는 어떤가요?</legend>
           <div class="chips" role="radiogroup">
             <label class="chip">
-              <input type="radio" name="condition" value="1.10" />
+              <input type="radio" name="condition" value="S" />
               <span class="chip__body">
                 <span class="chip__grade">S급</span>
                 <span class="chip__desc">미개봉</span>
               </span>
             </label>
             <label class="chip">
-              <input type="radio" name="condition" value="1.00" checked />
+              <input type="radio" name="condition" value="A" checked />
               <span class="chip__body">
                 <span class="chip__grade">A급</span>
                 <span class="chip__desc">기스 없음</span>
               </span>
             </label>
             <label class="chip">
-              <input type="radio" name="condition" value="0.85" />
+              <input type="radio" name="condition" value="B" />
               <span class="chip__body">
                 <span class="chip__grade">B급</span>
                 <span class="chip__desc">사용감 있음</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- 5. Bonus modifiers -->
+        <fieldset class="field">
+          <legend class="field__label">추가 보정 <span class="field__label-sub">해당되면 선택하세요</span></legend>
+          <div class="chips chips--bonus">
+            <label class="chip">
+              <input type="checkbox" name="warranty" />
+              <span class="chip__body">
+                <span class="chip__grade">🛡️ 무상보증 남음</span>
+                <span class="chip__desc">+5%</span>
+              </span>
+            </label>
+            <label class="chip">
+              <input type="checkbox" name="box" />
+              <span class="chip__body">
+                <span class="chip__grade">📦 박스·구성품 완비</span>
+                <span class="chip__desc">+3%</span>
               </span>
             </label>
           </div>
@@ -182,7 +225,11 @@
         <h2 class="breakdown-title">계산 근거</h2>
         <ul class="breakdown" id="breakdown"></ul>
       </div>
+
+      <button type="button" class="btn-share" id="share-btn">🔗 결과 공유하기</button>
     </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <!-- Related content -->
     <section class="more-links" aria-label="더 알아보기">

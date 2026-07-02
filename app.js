@@ -2,33 +2,47 @@
    By B · Project Plan-B — core depreciation logic + UI (Toss style)
    ============================================================ */
 
-/* ---- 1. Business constants (spec §2) ---- */
-const DEPRECIATION_RATE = {
-  major: 0.12, // 대형가전
-  digital: 0.22, // 디지털기기
+/* ---- 1. Business constants ---- */
+const CATEGORIES = {
+  fridge: { name: "냉장고", rate: 0.10, emoji: "🧊" },
+  washer: { name: "세탁기·건조기", rate: 0.12, emoji: "🌀" },
+  aircon: { name: "에어컨", rate: 0.11, emoji: "❄️" },
+  tv: { name: "TV", rate: 0.15, emoji: "📺" },
+  laptop: { name: "노트북", rate: 0.20, emoji: "💻" },
+  phone: { name: "스마트폰", rate: 0.25, emoji: "📱" },
+  tablet: { name: "태블릿", rate: 0.18, emoji: "📟" },
+  console: { name: "게임기", rate: 0.15, emoji: "🎮" },
+  etc: { name: "기타 가전", rate: 0.14, emoji: "🔌" },
 };
 
-const CONDITION_LABEL = {
-  "1.10": "S급 · 미개봉",
-  "1.00": "A급 · 기스 없음",
-  "0.85": "B급 · 사용감 있음",
+const GRADE = { S: 1.10, A: 1.00, B: 0.85 };
+const GRADE_LABEL = {
+  S: "S급 · 미개봉",
+  A: "A급 · 기스 없음",
+  B: "B급 · 사용감 있음",
 };
+
+const BONUS = { warranty: 1.05, box: 1.03 };
+const FLOOR_RATE = 0.05; // 바닥가: 신품가의 5% 아래로는 내려가지 않음
 
 /* ---- 2. Pure calculation core ---- */
 /**
  * 정률법(Declining Balance) 기반 시세 산출.
- * @returns {{residual:number, final:number, min:number, max:number, rate:number}}
+ * 잔존가치 = 신품가 × (1−r)^t, 최종가 = 잔존가치 × 상태가중 × 보정 (바닥가 하한)
  */
-function calculatePrice({ price, category, years, weight }) {
-  const rate = DEPRECIATION_RATE[category];
+function calculatePrice({ price, rate, years, weight, bonusMult = 1 }) {
   const residual = price * Math.pow(1 - rate, years); // 잔존가치
-  const final = residual * weight; // 상태 가중 최종가
+  const raw = residual * weight * bonusMult; // 상태·보정 반영
+  const floor = price * FLOOR_RATE;
+  const floorApplied = raw < floor;
+  const final = Math.max(raw, floor);
 
   // 스펙트럼 ±5%, 100원 단위 절사
   const floor100 = (n) => Math.floor(n / 100) * 100;
   return {
     rate,
     residual,
+    floorApplied,
     final: floor100(final),
     min: floor100(final * 0.95),
     max: floor100(final * 1.05),
@@ -39,6 +53,9 @@ function calculatePrice({ price, category, years, weight }) {
 const fmt = (n) => Math.round(n).toLocaleString("ko-KR");
 const won = (n) => fmt(n) + "원";
 const commas = (digits) => digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const track = (name, params) => {
+  if (typeof gtag === "function") gtag("event", name, params || {});
+};
 
 /* ---- 4. DOM refs ---- */
 const form = document.getElementById("calc-form");
@@ -47,6 +64,7 @@ const priceWrap = priceInput.closest(".input-money");
 const priceHint = document.getElementById("price-hint");
 const resultEl = document.getElementById("result");
 const finalPriceEl = document.getElementById("final-price");
+const toastEl = document.getElementById("toast");
 
 /* ---- 5. Live comma formatting on price input ---- */
 priceInput.addEventListener("input", () => {
@@ -84,15 +102,16 @@ function countUp(el, target, duration = 640) {
   }, duration + 50);
 }
 
-/* ---- 6b. Depreciation curve (Phase 1, Chart.js) ---- */
+/* ---- 7. Depreciation curve (Chart.js) ---- */
 let depChart = null;
 
-function renderChart({ price, category, years, weight }) {
+function renderChart({ price, catKey, years, weight, bonusMult }) {
   if (typeof Chart === "undefined") return; // CDN 로드 실패 시 차트만 생략
 
+  const cat = CATEGORIES[catKey];
   const values = [];
   for (let t = 0; t <= 10; t++) {
-    values.push(calculatePrice({ price, category, years: t, weight }).final);
+    values.push(calculatePrice({ price, rate: cat.rate, years: t, weight, bonusMult }).final);
   }
   const labels = values.map((_, t) => (t === 0 ? "지금" : `${t}년`));
   const pointRadius = values.map((_, t) => (t === years ? 6 : 3));
@@ -182,53 +201,83 @@ function renderChart({ price, category, years, weight }) {
   }
 }
 
-/* ---- 7. Submit → calculate → render ---- */
+/* ---- 8. Read form → calculate → render ---- */
+function getFormState() {
+  return {
+    price: Number(priceInput.value.replace(/[^\d]/g, "")),
+    catKey: form.category.value,
+    years: Number(form.years.value),
+    grade: form.condition.value,
+    warranty: form.warranty.checked,
+    box: form.box.checked,
+  };
+}
+
+function runCalculation(state, { updateUrl = true } = {}) {
+  const cat = CATEGORIES[state.catKey];
+  const weight = GRADE[state.grade];
+  const bonusMult = (state.warranty ? BONUS.warranty : 1) * (state.box ? BONUS.box : 1);
+
+  const r = calculatePrice({
+    price: state.price,
+    rate: cat.rate,
+    years: state.years,
+    weight,
+    bonusMult,
+  });
+
+  render({ r, state, cat });
+  renderChart({ price: state.price, catKey: state.catKey, years: state.years, weight, bonusMult });
+  if (updateUrl) syncShareUrl(state);
+  track("calculate", { category: state.catKey, years: state.years, grade: state.grade });
+}
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-
-  const price = Number(priceInput.value.replace(/[^\d]/g, ""));
-  if (!price || price <= 0) {
+  const state = getFormState();
+  if (!state.price || state.price <= 0) {
     priceWrap.classList.add("is-error");
     priceHint.classList.add("is-error");
     priceHint.textContent = "가격을 입력해야 계산할 수 있어요.";
     priceInput.focus();
     return;
   }
-
-  const category = form.category.value;
-  const years = Number(form.years.value);
-  const weight = Number(form.condition.value);
-
-  const r = calculatePrice({ price, category, years, weight });
-  render({ r, price, category, years, weight });
-  renderChart({ price, category, years, weight });
+  runCalculation(state);
 });
 
-/* ---- 8. Render result ---- */
-function render({ r, price, category, years, weight }) {
+/* ---- 9. Render result ---- */
+function render({ r, state, cat }) {
   countUp(finalPriceEl, r.final);
   document.getElementById("min-price").textContent = won(r.min);
   document.getElementById("max-price").textContent = won(r.max);
 
   // 동적 감가 안내 텍스트
-  const catName = category === "major" ? "대형가전" : "디지털기기";
   const ratePct = Math.round(r.rate * 100);
-  const dropPct = Math.round((1 - r.final / price) * 100);
+  const dropPct = Math.round((1 - r.final / state.price) * 100);
   const note = document.getElementById("depreciation-note");
-  if (years === 0) {
-    note.textContent = `${catName}은 해마다 ${ratePct}%씩 가치가 떨어져요. 미개봉이라 상태 프리미엄이 붙었어요.`;
+  if (r.floorApplied) {
+    note.textContent = `${cat.name}의 계산상 가치는 더 낮지만, 부품·재활용 가치를 고려한 최소 잔존가(신품가의 5%)를 적용했어요.`;
+  } else if (state.years === 0) {
+    note.textContent = `${cat.name}은 해마다 ${ratePct}%씩 가치가 떨어져요. 미개봉이라 상태 프리미엄이 붙었어요.`;
   } else {
-    note.textContent = `${catName} 기준 해마다 ${ratePct}%씩 감가되어, ${years}년 만에 새 제품보다 약 ${dropPct}% 낮아졌어요.`;
+    note.textContent = `${cat.name} 기준 해마다 ${ratePct}%씩 감가되어, ${state.years}년 만에 새 제품보다 약 ${dropPct}% 낮아졌어요.`;
   }
 
   // Breakdown
-  document.getElementById("breakdown").innerHTML = `
-    <li><span>새 제품 가격</span><span>${won(price)}</span></li>
-    <li><span>연간 감가율 (${catName})</span><span>${ratePct}%</span></li>
-    <li><span>사용 기간</span><span>${years === 0 ? "미개봉" : years + "년"}</span></li>
-    <li><span>잔존가치 (상태 반영 전)</span><span>${won(r.residual)}</span></li>
-    <li><span>제품 상태</span><span>${CONDITION_LABEL[weight.toFixed(2)]}</span></li>
-  `;
+  const rows = [
+    ["새 제품 가격", won(state.price)],
+    [`연간 감가율 (${cat.name})`, `${ratePct}%`],
+    ["사용 기간", state.years === 0 ? "미개봉" : state.years + "년"],
+    ["잔존가치 (보정 전)", won(r.residual)],
+    ["제품 상태", GRADE_LABEL[state.grade]],
+  ];
+  if (state.warranty) rows.push(["무상보증 남음", "+5%"]);
+  if (state.box) rows.push(["박스·구성품 완비", "+3%"]);
+  if (r.floorApplied) rows.push(["최소 잔존가 적용", "신품가의 5%"]);
+
+  document.getElementById("breakdown").innerHTML = rows
+    .map(([k, v]) => `<li><span>${k}</span><span>${v}</span></li>`)
+    .join("");
 
   // Reveal with fade-in
   resultEl.classList.remove("is-hidden");
@@ -238,3 +287,77 @@ function render({ r, price, category, years, weight }) {
   resultEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
+/* ---- 10. Share: URL sync + share button ---- */
+function syncShareUrl(state) {
+  const q = new URLSearchParams({
+    c: state.catKey,
+    p: state.price,
+    y: state.years,
+    g: state.grade,
+  });
+  if (state.warranty) q.set("w", "1");
+  if (state.box) q.set("b", "1");
+  history.replaceState(null, "", `${location.pathname}?${q}`);
+}
+
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add("is-show");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toastEl.classList.remove("is-show"), 2200);
+}
+
+document.getElementById("share-btn").addEventListener("click", async () => {
+  const url = location.href;
+  const state = getFormState();
+  const cat = CATEGORIES[state.catKey];
+  const title = `${cat.name} 중고 시세 — ${finalPriceEl.textContent}원 (By B)`;
+  track("share", { category: state.catKey });
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, text: title, url });
+      return;
+    } catch (err) {
+      if (err.name === "AbortError") return; // 사용자가 공유 시트를 닫음
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast("링크를 복사했어요");
+  } catch {
+    // 클립보드 API 권한이 없는 환경용 폴백
+    const ta = document.createElement("textarea");
+    ta.value = url;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand("copy");
+    ta.remove();
+    showToast(ok ? "링크를 복사했어요" : "복사에 실패했어요. 주소창의 URL을 복사해 주세요.");
+  }
+});
+
+/* ---- 11. Restore state from shared URL ---- */
+(function restoreFromUrl() {
+  const q = new URLSearchParams(location.search);
+  const catKey = q.get("c");
+  const price = Number(q.get("p"));
+  if (!CATEGORIES[catKey] || !price || price <= 0) return;
+
+  const years = Math.min(Math.max(Number(q.get("y")) || 0, 0), 10);
+  const grade = GRADE[q.get("g")] ? q.get("g") : "A";
+
+  form.category.value = catKey;
+  priceInput.value = commas(String(Math.min(price, 999999999999)));
+  form.years.value = String(years);
+  form.condition.value = grade;
+  form.warranty.checked = q.get("w") === "1";
+  form.box.checked = q.get("b") === "1";
+
+  // Chart.js가 defer 로드되므로 로드 완료 후 실행
+  const start = () => runCalculation(getFormState(), { updateUrl: false });
+  if (document.readyState === "complete") start();
+  else window.addEventListener("load", start, { once: true });
+})();
