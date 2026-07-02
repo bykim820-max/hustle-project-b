@@ -2,11 +2,6 @@
    By B · Project Plan-B — core depreciation logic + UI (Toss style)
    ============================================================ */
 
-/* ---- 0. Config ---- */
-// Cloudflare Worker 프록시 URL (cloudflare-worker/naver-proxy.js 배포 후 입력).
-// 비어 있으면 신품가 자동 검색 UI가 숨겨집니다.
-const NAVER_PROXY_URL = "";
-
 /* ---- 1. Business constants ---- */
 const CATEGORIES = {
   fridge: { name: "냉장고", rate: 0.10, emoji: "🧊" },
@@ -344,64 +339,27 @@ document.getElementById("share-btn").addEventListener("click", async () => {
   }
 });
 
-/* ---- 10b. Naver shopping model search (Phase 2) ---- */
-(function initModelSearch() {
-  if (!NAVER_PROXY_URL) return; // 프록시 미배포 시 기능 비활성
-
-  const wrap = document.getElementById("model-search");
+/* ---- 10b. 신품가 확인 아웃링크 (네이버 쇼핑 새 탭) ----
+   네이버 검색 API는 약관상 광고(애드센스)와 결과 병행 노출이 금지되어
+   API 대신 검색 결과 페이지로 연결하는 아웃링크 방식을 사용합니다. */
+(function initShopOutlink() {
   const queryInput = document.getElementById("model-query");
-  const searchBtn = document.getElementById("model-search-btn");
-  const resultsEl = document.getElementById("model-results");
-  wrap.classList.remove("is-hidden");
+  const openBtn = document.getElementById("model-search-btn");
 
-  const setStatus = (msg) => {
-    resultsEl.innerHTML = msg ? `<li class="model-search__status">${msg}</li>` : "";
+  const open = () => {
+    const q = queryInput.value.trim();
+    const url = q
+      ? `https://search.shopping.naver.com/search/all?query=${encodeURIComponent(q)}`
+      : "https://shopping.naver.com/";
+    track("shop_outlink", { has_query: q ? 1 : 0 });
+    window.open(url, "_blank", "noopener");
   };
 
-  async function search() {
-    const q = queryInput.value.trim();
-    if (!q) return;
-    setStatus("검색 중이에요…");
-    track("model_search", { query_length: q.length });
-    try {
-      const res = await fetch(`${NAVER_PROXY_URL}?query=${encodeURIComponent(q)}`);
-      if (!res.ok) throw new Error(`proxy ${res.status}`);
-      const { items } = await res.json();
-      if (!items || !items.length) {
-        setStatus("검색 결과가 없어요. 모델명을 더 짧게 입력해 보세요.");
-        return;
-      }
-      resultsEl.innerHTML = items
-        .map(
-          (it, i) => `
-          <li>
-            <button type="button" data-price="${it.lprice}" data-i="${i}">
-              <span class="r-title">${it.title}</span>
-              <span class="r-price">${won(it.lprice)}</span>
-            </button>
-          </li>`
-        )
-        .join("");
-      resultsEl.querySelectorAll("button").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          priceInput.value = commas(btn.dataset.price);
-          priceInput.dispatchEvent(new Event("input"));
-          setStatus("");
-          queryInput.value = "";
-          showToast("신품 최저가를 입력했어요");
-        });
-      });
-    } catch (err) {
-      console.error(err);
-      setStatus("검색에 실패했어요. 잠시 후 다시 시도해 주세요.");
-    }
-  }
-
-  searchBtn.addEventListener("click", search);
+  openBtn.addEventListener("click", open);
   queryInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault(); // 폼 제출(시세 계산) 방지
-      search();
+      open();
     }
   });
 })();

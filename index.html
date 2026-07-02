@@ -99,18 +99,18 @@
         <div class="field">
           <label class="field__label" for="price">새 제품 가격</label>
 
-          <!-- 신품가 자동 검색 (프록시 미설정 시 숨김) -->
-          <div class="model-search is-hidden" id="model-search">
+          <!-- 신품가 확인 아웃링크 (네이버 쇼핑 새 탭) -->
+          <div class="model-search" id="model-search">
             <div class="model-search__row">
               <input
                 type="search"
                 id="model-query"
-                placeholder="모델명으로 검색 (예: 삼성 RF85C)"
+                placeholder="모델명으로 신품가 찾기 (예: 삼성 RF85C)"
                 autocomplete="off"
               />
-              <button type="button" id="model-search-btn">검색</button>
+              <button type="button" id="model-search-btn">네이버 쇼핑 ↗</button>
             </div>
-            <ul class="model-search__results" id="model-results"></ul>
+            <p class="model-search__hint">새 탭에서 최저가를 확인한 뒤 아래에 입력해 주세요.</p>
           </div>
 
           <div class="input-money">
