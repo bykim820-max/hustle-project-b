@@ -96,13 +96,13 @@ function renderChart({ price, category, years, weight }) {
   }
   const labels = values.map((_, t) => (t === 0 ? "지금" : `${t}년`));
   const pointRadius = values.map((_, t) => (t === years ? 6 : 3));
-  const pointBg = values.map((_, t) => (t === years ? "#3182f6" : "#ffffff"));
+  const pointBg = values.map((_, t) => (t === years ? "#00b8a2" : "#ffffff"));
 
   const csDesc = document.getElementById("chart-desc");
   csDesc.textContent =
     years === 0
       ? "지금 팔 때와 앞으로 가치가 어떻게 변하는지 보여드려요."
-      : `${years}년 차인 지금이 파란 점이에요. 1년 더 쓰면 ${won(values[Math.min(years + 1, 10)])}까지 내려가요.`;
+      : `${years}년 차인 지금이 민트색 점이에요. 1년 더 쓰면 ${won(values[Math.min(years + 1, 10)])}까지 내려가요.`;
 
   const config = {
     type: "line",
@@ -110,20 +110,20 @@ function renderChart({ price, category, years, weight }) {
       labels,
       datasets: [{
         data: values,
-        borderColor: "#3182f6",
+        borderColor: "#00b8a2",
         borderWidth: 2.5,
         pointRadius,
         pointBackgroundColor: pointBg,
-        pointBorderColor: "#3182f6",
+        pointBorderColor: "#00b8a2",
         pointBorderWidth: 2,
         tension: 0.35,
         fill: true,
         backgroundColor: (ctx) => {
           const { chartArea, ctx: c } = ctx.chart;
-          if (!chartArea) return "rgba(49, 130, 246, 0.06)";
+          if (!chartArea) return "rgba(0, 184, 162, 0.06)";
           const g = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-          g.addColorStop(0, "rgba(49, 130, 246, 0.14)");
-          g.addColorStop(1, "rgba(49, 130, 246, 0)");
+          g.addColorStop(0, "rgba(0, 184, 162, 0.14)");
+          g.addColorStop(1, "rgba(0, 184, 162, 0)");
           return g;
         },
       }],
