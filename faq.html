@@ -31,12 +31,71 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9798410863522242" crossorigin="anonymous"></script>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="stylesheet" href="styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "시세는 어떤 원리로 계산되나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "회계에서 쓰는 정률법(Declining Balance Method)을 사용해요. 잔존가치 = 신품가 × (1 − 연간 감가율)^사용년수로 계산한 뒤, 제품 상태 가중치(S급 +10%, A급 0%, B급 −15%)를 곱해 최종 추천가를 만듭니다. 여기에 ±5%를 적용한 범위가 협상 스펙트럼이에요." }
+      },
+      {
+        "@type": "Question",
+        "name": "계산 결과가 실제 중고 거래가와 다른 이유는 뭔가요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "이 계산기는 감가상각 이론에 기반한 기준선을 제공해요. 실제 거래가는 지역 수요, 계절, 브랜드 선호도, 매물의 희소성에 따라 이 기준선 위아래로 움직입니다." }
+      },
+      {
+        "@type": "Question",
+        "name": "품목마다 감가율이 왜 다른가요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "수명과 신모델 교체 주기가 다르기 때문이에요. 냉장고(연 10%)처럼 10년 이상 쓰는 가전은 천천히, 스마트폰(연 25%)처럼 매년 신모델이 나오는 기기는 가파르게 떨어집니다. By B는 품목별로 10~25%의 감가율을 적용해요." }
+      },
+      {
+        "@type": "Question",
+        "name": "무상보증·박스 보정은 어떻게 적용되나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "제조사 무상보증이 남아 있으면 +5%, 정품 박스와 구성품이 온전하면 +3%가 가산돼요. 두 가지 모두 해당하면 중복 적용됩니다." }
+      },
+      {
+        "@type": "Question",
+        "name": "오래된 가전인데 계산 결과가 생각보다 높게 나와요.",
+        "acceptedAnswer": { "@type": "Answer", "text": "By B는 부품·재활용 가치를 고려해 신품가의 5%를 최소 잔존가(바닥가)로 적용해요. 이 구간이라면 직접 판매보다 폐가전 무상수거(1599-0903)나 보상판매가 더 나을 수 있어요." }
+      },
+      {
+        "@type": "Question",
+        "name": "계산 결과를 다른 사람에게 공유할 수 있나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "네. 결과 아래의 '결과 공유하기' 버튼을 누르면 입력 조건이 담긴 링크가 만들어져요. 링크를 받은 사람이 열면 같은 계산 결과가 바로 보입니다." }
+      },
+      {
+        "@type": "Question",
+        "name": "미개봉 새 제품인데 왜 신품가보다 낮게 나오나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "개인 간 거래에서는 미개봉이라도 공식 유통망의 보증·반품 권리가 없기 때문에 신품가 그대로 받기 어려워요. 다만 S급(+10%) 가중치가 붙어 감가 전 가격에 가장 가깝게 산출됩니다." }
+      },
+      {
+        "@type": "Question",
+        "name": "상태 등급(S/A/B)은 어떻게 골라야 하나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "구매자 눈높이로 고르는 게 원칙이에요. 미개봉·미사용이면 S급, 정상 사용했지만 사진에 찍히는 흠이 없으면 A급, 눈에 보이는 기스·변색이 있으면 B급입니다." }
+      },
+      {
+        "@type": "Question",
+        "name": "에어컨은 이전설치비를 누가 부담하나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "관례상 구매자 부담이 일반적이에요. 다만 철거는 판매자가 해두는 경우가 많고, 철거·설치 비용(보통 15~30만 원)이 크기 때문에 거래 전에 반드시 명확히 합의해야 분쟁이 없어요." }
+      },
+      {
+        "@type": "Question",
+        "name": "입력한 가격 정보는 저장되나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "아니요. 계산은 전부 사용자의 브라우저 안에서 이뤄지고, 입력값은 서버로 전송되지도 저장되지도 않아요." }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <main class="app">
     <nav class="nav" aria-label="주요 메뉴">
       <a class="nav__logo" href="./">By B</a>
       <a class="nav__link" href="./">시세 계산기</a>
+      <a class="nav__link" href="price/">모델별 시세</a>
       <a class="nav__link" href="guide.html">판매 가이드</a>
       <a class="nav__link is-active" href="faq.html">FAQ</a>
       <a class="nav__link" href="about.html">소개</a>

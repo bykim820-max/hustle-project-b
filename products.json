@@ -1,0 +1,32 @@
+{
+  "_comment": "모델별 랜딩 페이지 시드 데이터. price는 국내 출시가 기준 추정치(원). 추가 후 `node build.js` 실행.",
+  "products": [
+    { "slug": "iphone-16", "name": "아이폰 16", "cat": "phone", "price": 1250000, "year": 2024, "brand": "Apple" },
+    { "slug": "iphone-15", "name": "아이폰 15", "cat": "phone", "price": 1250000, "year": 2023, "brand": "Apple" },
+    { "slug": "iphone-15-pro", "name": "아이폰 15 프로", "cat": "phone", "price": 1550000, "year": 2023, "brand": "Apple" },
+    { "slug": "iphone-14", "name": "아이폰 14", "cat": "phone", "price": 1250000, "year": 2022, "brand": "Apple" },
+    { "slug": "galaxy-s25", "name": "갤럭시 S25", "cat": "phone", "price": 1155000, "year": 2025, "brand": "삼성" },
+    { "slug": "galaxy-s24", "name": "갤럭시 S24", "cat": "phone", "price": 1155000, "year": 2024, "brand": "삼성" },
+    { "slug": "galaxy-s23", "name": "갤럭시 S23", "cat": "phone", "price": 1155000, "year": 2023, "brand": "삼성" },
+    { "slug": "galaxy-z-flip5", "name": "갤럭시 Z 플립5", "cat": "phone", "price": 1399200, "year": 2023, "brand": "삼성" },
+    { "slug": "macbook-air-m2", "name": "맥북 에어 M2", "cat": "laptop", "price": 1690000, "year": 2022, "brand": "Apple" },
+    { "slug": "macbook-pro-14-m3", "name": "맥북 프로 14 M3", "cat": "laptop", "price": 2390000, "year": 2023, "brand": "Apple" },
+    { "slug": "lg-gram-16", "name": "LG 그램 16", "cat": "laptop", "price": 1890000, "year": 2023, "brand": "LG" },
+    { "slug": "galaxy-book4", "name": "갤럭시 북4", "cat": "laptop", "price": 1459000, "year": 2024, "brand": "삼성" },
+    { "slug": "ipad-air-5", "name": "아이패드 에어 5", "cat": "tablet", "price": 929000, "year": 2022, "brand": "Apple" },
+    { "slug": "ipad-pro-11-m2", "name": "아이패드 프로 11 M2", "cat": "tablet", "price": 1249000, "year": 2022, "brand": "Apple" },
+    { "slug": "galaxy-tab-s9", "name": "갤럭시 탭 S9", "cat": "tablet", "price": 1148400, "year": 2023, "brand": "삼성" },
+    { "slug": "samsung-bespoke-rf85", "name": "삼성 비스포크 4도어 냉장고 RF85", "cat": "fridge", "price": 2800000, "year": 2023, "brand": "삼성" },
+    { "slug": "lg-dios-obje-4door", "name": "LG 디오스 오브제컬렉션 4도어 냉장고", "cat": "fridge", "price": 2900000, "year": 2023, "brand": "LG" },
+    { "slug": "samsung-kimchi-plus", "name": "삼성 비스포크 김치플러스", "cat": "fridge", "price": 2200000, "year": 2023, "brand": "삼성" },
+    { "slug": "lg-tromm-21kg", "name": "LG 트롬 세탁기 21kg", "cat": "washer", "price": 1190000, "year": 2022, "brand": "LG" },
+    { "slug": "samsung-grande-21kg", "name": "삼성 그랑데 세탁기 21kg", "cat": "washer", "price": 1090000, "year": 2022, "brand": "삼성" },
+    { "slug": "lg-tromm-dryer-20kg", "name": "LG 트롬 건조기 20kg", "cat": "washer", "price": 1690000, "year": 2023, "brand": "LG" },
+    { "slug": "samsung-windfree-gallery", "name": "삼성 무풍에어컨 갤러리", "cat": "aircon", "price": 2400000, "year": 2023, "brand": "삼성" },
+    { "slug": "lg-whisen-stand", "name": "LG 휘센 스탠드 에어컨", "cat": "aircon", "price": 2200000, "year": 2023, "brand": "LG" },
+    { "slug": "samsung-qled-65", "name": "삼성 QLED 65인치 TV", "cat": "tv", "price": 2190000, "year": 2023, "brand": "삼성" },
+    { "slug": "lg-oled-65c3", "name": "LG 올레드 65인치 C3", "cat": "tv", "price": 3090000, "year": 2023, "brand": "LG" },
+    { "slug": "ps5", "name": "플레이스테이션 5", "cat": "console", "price": 688000, "year": 2020, "brand": "소니" },
+    { "slug": "nintendo-switch-oled", "name": "닌텐도 스위치 OLED", "cat": "console", "price": 415000, "year": 2021, "brand": "닌텐도" }
+  ]
+}
