@@ -13,6 +13,12 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://jungosise.com/tips/</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://jungosise.com/guide.html</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
@@ -29,6 +35,36 @@
     <lastmod>2026-07-13</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://jungosise.com/tips/aircon-sell-timing.html</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jungosise.com/tips/move-sell-or-keep.html</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jungosise.com/tips/fridge-sell-checklist.html</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jungosise.com/tips/washer-sell-guide.html</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jungosise.com/tips/free-disposal-guide.html</loc>
+    <lastmod>2026-07-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://jungosise.com/price/iphone-16.html</loc>

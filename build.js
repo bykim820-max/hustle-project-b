@@ -64,15 +64,26 @@ const nav = (active) => `
       <a class="nav__link" href="../">시세 계산기</a>
       <a class="nav__link${active === "models" ? " is-active" : ""}" href="./">모델별 시세</a>
       <a class="nav__link" href="../guide.html">판매 가이드</a>
+      <a class="nav__link" href="../tips/">꿀팁</a>
       <a class="nav__link" href="../faq.html">FAQ</a>
       <a class="nav__link" href="../about.html">소개</a>
     </nav>`;
+
+/* ---- 꿀팁 아티클 (tips/*.html은 수기 작성, 여기엔 sitemap/RSS 등록용 메타만) ---- */
+const ARTICLES = [
+  { slug: "aircon-sell-timing", title: "에어컨 중고 판매, 여름이 골든타임인 이유", desc: "계절별 시세 곡선, 이전설치비 관례, 판매자 실수 5가지" },
+  { slug: "move-sell-or-keep", title: "이사할 때 가전, 팔까 가져갈까?", desc: "운반비 vs 잔존가치, 손익으로 따지는 판단 공식" },
+  { slug: "fridge-sell-checklist", title: "냉장고 중고로 팔 때 체크리스트", desc: "냄새·성에 제거부터 운반 문제까지 실전 정리" },
+  { slug: "washer-sell-guide", title: "세탁기·건조기 중고 거래 가이드", desc: "통세척, 드럼 vs 통돌이, 분쟁 예방법" },
+  { slug: "free-disposal-guide", title: "폐가전 무상수거 완전정리 (1599-0903)", desc: "무료 수거 대상, 신청 방법, 팔까 버릴까 기준" },
+];
 
 const footer = `
     <footer class="app__footer">
       <div class="footer-links">
         <a href="../">시세 계산기</a>
         <a href="./">모델별 시세</a>
+        <a href="../tips/">꿀팁</a>
         <a href="../guide.html">판매 가이드</a>
         <a href="../faq.html">FAQ</a>
         <a href="../privacy.html">개인정보처리방침</a>
@@ -269,12 +280,14 @@ function sitemap() {
   const core = [
     { loc: `${SITE}/`, priority: "1.0", freq: "weekly" },
     { loc: `${SITE}/price/`, priority: "0.9", freq: "weekly" },
+    { loc: `${SITE}/tips/`, priority: "0.8", freq: "weekly" },
     { loc: `${SITE}/guide.html`, priority: "0.8", freq: "monthly" },
     { loc: `${SITE}/faq.html`, priority: "0.7", freq: "monthly" },
     { loc: `${SITE}/about.html`, priority: "0.5", freq: "yearly" },
   ];
   const urls = [
     ...core,
+    ...ARTICLES.map((a) => ({ loc: `${SITE}/tips/${a.slug}.html`, priority: "0.7", freq: "monthly" })),
     ...products.map((p) => ({ loc: `${SITE}/price/${p.slug}.html`, priority: "0.7", freq: "monthly" })),
   ]
     .map(
@@ -296,6 +309,7 @@ function rss() {
     { title: "인기 모델별 중고 시세 모음", link: `${SITE}/price/`, desc: `인기 가전 ${products.length}개 모델의 중고 시세` },
     { title: "중고 가전 제값 받고 파는 법", link: `${SITE}/guide.html`, desc: "감가상각 원리부터 실전 판매 팁, 사기 예방까지" },
     { title: "자주 묻는 질문", link: `${SITE}/faq.html`, desc: "시세 계산 원리와 데이터 처리 방식" },
+    ...ARTICLES.map((a) => ({ title: a.title, link: `${SITE}/tips/${a.slug}.html`, desc: a.desc })),
     ...products.map((p) => ({
       title: `${p.name} 중고 가격 시세 (${THIS_YEAR}년)`,
       link: `${SITE}/price/${p.slug}.html`,
