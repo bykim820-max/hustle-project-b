@@ -11,7 +11,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const SITE = "https://bykim820-max.github.io/hustle-project-b";
+const SITE = "https://jungosise.com";
 const TODAY = new Date().toISOString().slice(0, 10);
 const THIS_YEAR = new Date().getFullYear();
 
