@@ -339,30 +339,225 @@ document.getElementById("share-btn").addEventListener("click", async () => {
   }
 });
 
-/* ---- 10b. 신품가 확인 아웃링크 (네이버 쇼핑 새 탭) ----
-   네이버 검색 API는 약관상 광고(애드센스)와 결과 병행 노출이 금지되어
-   API 대신 검색 결과 페이지로 연결하는 아웃링크 방식을 사용합니다. */
-(function initShopOutlink() {
-  const queryInput = document.getElementById("model-query");
-  const openBtn = document.getElementById("model-search-btn");
+/* ---- 10b. 모델 자동완성 파인더 ----
+   products.json(59개 모델)을 클라이언트에서 필터링.
+   히어로: 선택 → 모델 시세 페이지 이동 / 계산기: 선택 → 출시가·연식 자동 입력.
+   미등록 모델 검색어는 GA 이벤트(model_search_miss)로 수집해 신규 페이지 후보로 활용. */
+const THIS_YEAR = new Date().getFullYear();
+const escapeHtml = (s) =>
+  s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  const open = () => {
-    const q = queryInput.value.trim();
-    const url = q
-      ? `https://search.shopping.naver.com/search/all?query=${encodeURIComponent(q)}`
-      : "https://shopping.naver.com/";
-    track("shop_outlink", { has_query: q ? 1 : 0 });
-    window.open(url, "_blank", "noopener");
+/* 한글 음절 → 초성 (초성 검색용) */
+const CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
+const toChosung = (s) =>
+  [...s].map((ch) => {
+    const code = ch.charCodeAt(0) - 0xac00;
+    return code >= 0 && code <= 11171 ? CHO[Math.floor(code / 588)] : ch;
+  }).join("");
+const normalize = (s) => s.toLowerCase().replace(/\s+/g, "");
+
+let productsPromise = null;
+function loadProducts() {
+  if (!productsPromise) {
+    productsPromise = fetch("products.json")
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(({ products }) =>
+        products
+          .filter((p) => CATEGORIES[p.cat])
+          .map((p) => ({
+            ...p,
+            key: normalize(`${p.name}${p.brand || ""}`),
+            cho: normalize(toChosung(p.name)),
+          }))
+      )
+      .catch((err) => {
+        productsPromise = null; // 다음 입력에서 재시도
+        throw err;
+      });
+  }
+  return productsPromise;
+}
+
+function searchModels(products, query) {
+  const q = normalize(query);
+  if (!q) return [];
+  const byChosung = /^[ㄱ-ㅎ]+$/.test(q);
+  return products
+    .filter((p) => (byChosung ? p.cho.includes(q) : p.key.includes(q)))
+    .sort((a, b) => {
+      const aFirst = (byChosung ? a.cho : a.key).startsWith(q) ? 0 : 1;
+      const bFirst = (byChosung ? b.cho : b.key).startsWith(q) ? 0 : 1;
+      return aFirst - bFirst || b.year - a.year;
+    })
+    .slice(0, 7);
+}
+
+/* A급 현재 시세 (짧은 표기: 1,969,400 → 약 197만원) */
+const estimateA = (p) => {
+  const years = Math.min(Math.max(THIS_YEAR - p.year, 0), 10);
+  return calculatePrice({ price: p.price, rate: CATEGORIES[p.cat].rate, years, weight: GRADE.A }).final;
+};
+const fmtShort = (n) => (n >= 10000 ? `약 ${Math.round(n / 10000).toLocaleString("ko-KR")}만원` : `약 ${won(n)}`);
+
+function initFinder({ inputId, listId, placement, onSelect, emptyActionsHtml, onEmptyAction }) {
+  const input = document.getElementById(inputId);
+  const list = document.getElementById(listId);
+  let results = [];
+  let activeIdx = -1;
+  let lastQuery = "";
+
+  const close = () => {
+    list.hidden = true;
+    input.setAttribute("aria-expanded", "false");
+    input.removeAttribute("aria-activedescendant");
+    activeIdx = -1;
   };
 
-  openBtn.addEventListener("click", open);
-  queryInput.addEventListener("keydown", (e) => {
+  const renderEmpty = (q) => {
+    list.innerHTML = `<li class="finder__empty" role="option" aria-disabled="true">
+      ‘<strong>${escapeHtml(q)}</strong>’ 모델은 아직 준비 중이에요.
+      <span class="finder__empty-actions">${emptyActionsHtml(q)}</span>
+    </li>`;
+    list.hidden = false;
+    input.setAttribute("aria-expanded", "true");
+  };
+
+  const renderError = () => {
+    list.innerHTML = `<li class="finder__empty" role="option" aria-disabled="true">
+      모델 목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
+    </li>`;
+    list.hidden = false;
+    input.setAttribute("aria-expanded", "true");
+  };
+
+  const render = () => {
+    if (!results.length) return renderEmpty(lastQuery);
+    list.innerHTML = results
+      .map(
+        (p, i) => `<li class="finder__item${i === activeIdx ? " is-active" : ""}"
+          id="${listId}-opt-${i}" role="option" aria-selected="${i === activeIdx}">
+          <span>
+            <span class="finder__name">${escapeHtml(p.name)}</span>
+            <span class="finder__meta">${CATEGORIES[p.cat].emoji} ${CATEGORIES[p.cat].name} · ${p.year}년 출시</span>
+          </span>
+          <span class="finder__price">A급 ${fmtShort(estimateA(p))}</span>
+        </li>`
+      )
+      .join("");
+    list.hidden = false;
+    input.setAttribute("aria-expanded", "true");
+    if (activeIdx >= 0) input.setAttribute("aria-activedescendant", `${listId}-opt-${activeIdx}`);
+    else input.removeAttribute("aria-activedescendant");
+  };
+
+  const update = async () => {
+    lastQuery = input.value.trim();
+    if (!lastQuery) return close();
+    try {
+      const products = await loadProducts();
+      if (input.value.trim() !== lastQuery) return; // 입력이 이미 바뀜
+      results = searchModels(products, lastQuery);
+      activeIdx = -1;
+      render();
+    } catch {
+      renderError();
+    }
+  };
+
+  const select = (p) => {
+    track("model_search_select", { slug: p.slug, placement });
+    close();
+    onSelect(p);
+  };
+
+  input.addEventListener("input", update);
+  input.addEventListener("focus", () => {
+    loadProducts().catch(() => {}); // 데이터 프리로드
+    if (input.value.trim()) update();
+  });
+
+  input.addEventListener("keydown", (e) => {
+    // "Esc"/"Down"/"Up"은 구형 브라우저의 레거시 key 값
+    if (e.key === "Escape" || e.key === "Esc") return close();
     if (e.key === "Enter") {
       e.preventDefault(); // 폼 제출(시세 계산) 방지
-      open();
+      if (results.length) select(results[Math.max(activeIdx, 0)]);
+      else if (lastQuery) track("model_search_miss", { query: lastQuery.slice(0, 80), placement });
+      return;
+    }
+    if (["ArrowDown", "ArrowUp", "Down", "Up"].includes(e.key)) {
+      if (list.hidden || !results.length) return;
+      e.preventDefault();
+      const dir = e.key === "ArrowDown" || e.key === "Down" ? 1 : -1;
+      activeIdx = (activeIdx + dir + results.length) % results.length;
+      render();
+      list.querySelector(".is-active")?.scrollIntoView({ block: "nearest" });
     }
   });
-})();
+
+  /* mousedown: blur보다 먼저 실행되어 선택이 씹히지 않게 함 */
+  list.addEventListener("mousedown", (e) => {
+    const item = e.target.closest(".finder__item");
+    if (item) {
+      e.preventDefault();
+      select(results[Number(item.id.split("-opt-")[1])]);
+      return;
+    }
+    const action = e.target.closest("[data-empty-action]");
+    if (action) {
+      e.preventDefault();
+      track("model_search_miss", { query: lastQuery.slice(0, 80), placement });
+      onEmptyAction?.(action.dataset.emptyAction, lastQuery);
+      close();
+      return;
+    }
+    /* 네이버 쇼핑 폴백 링크: 기본 동작(새 탭)은 유지하고 miss만 기록 */
+    if (e.target.closest("a")) {
+      track("model_search_miss", { query: lastQuery.slice(0, 80), placement });
+    }
+  });
+
+  input.addEventListener("blur", () => setTimeout(close, 120));
+}
+
+/* 히어로 파인더: 선택 → 모델 시세 페이지 이동 */
+initFinder({
+  inputId: "hero-query",
+  listId: "hero-listbox",
+  placement: "hero",
+  onSelect: (p) => {
+    location.href = `price/${p.slug}.html`;
+  },
+  emptyActionsHtml: () => `<button type="button" data-empty-action="calc">아래 계산기로 직접 계산하기 ↓</button>`,
+  onEmptyAction: () => {
+    document.getElementById("calc-form").scrollIntoView({ behavior: "smooth", block: "start" });
+    setTimeout(() => priceInput.focus({ preventScroll: true }), 400);
+  },
+});
+
+/* 계산기 파인더: 선택 → 출시가·연식 자동 입력 후 즉시 계산 */
+initFinder({
+  inputId: "calc-query",
+  listId: "calc-listbox",
+  placement: "calc",
+  onSelect: (p) => {
+    const input = document.getElementById("calc-query");
+    input.value = p.name;
+    form.category.value = p.cat;
+    priceInput.value = commas(String(p.price));
+    form.years.value = String(Math.min(Math.max(THIS_YEAR - p.year, 0), 10));
+    priceWrap.classList.remove("is-error");
+    priceHint.classList.remove("is-error");
+    priceHint.textContent = `${p.name} 출시가 기준이에요. 실제 구매가를 알면 수정해 주세요.`;
+    runCalculation(getFormState());
+  },
+  emptyActionsHtml: (q) =>
+    `<a href="https://search.shopping.naver.com/search/all?query=${encodeURIComponent(q)}"
+       target="_blank" rel="noopener noreferrer nofollow">네이버 쇼핑에서 신품가 확인 ↗</a>`,
+});
 
 /* ---- 11. Restore state from shared URL ---- */
 (function restoreFromUrl() {
