@@ -149,6 +149,11 @@ function productPage(p) {
     },
   ];
 
+  // 모델 고유 문단 (products.json의 notes) — 페이지 고유성 확보용
+  const notesBlock = p.notes
+    ? `\n      <h2>${p.name} 거래 포인트</h2>\n      <p>${p.notes}</p>\n`
+    : "";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -201,7 +206,7 @@ ${nav("models")}
       S급 ${won(nowS)} · <strong>A급 ${won(nowA)}</strong> · B급 ${won(nowB)}</p>
 
       <p>${CAT_INTRO[p.cat]}</p>
-
+${notesBlock}
       <h2>연차별·상태별 시세표</h2>
       <p>${cat.name}의 연간 감가율 ${ratePct}%를 적용한 상태 등급별 적정 가격이에요. 표의 가격은 출시가 기준이며, 실제 구매가를 알고 있다면 계산기에서 더 정확하게 확인할 수 있어요.</p>
       <table>
