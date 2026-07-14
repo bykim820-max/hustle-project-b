@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * By B — 모델별 랜딩 페이지 / sitemap.xml / rss.xml 생성기
+ * 중고시세 — 모델별 랜딩 페이지 / sitemap.xml / rss.xml 생성기
  *
  * 사용법: node build.js
  *  - products.json을 읽어 price/<slug>.html + price/index.html 생성
@@ -61,7 +61,7 @@ const HEAD_COMMON = `
 
 const nav = (active) => `
     <nav class="nav" aria-label="주요 메뉴">
-      <a class="nav__logo" href="../">By B</a>
+      <a class="nav__logo" href="../">중고시세</a>
       <a class="nav__link" href="../">시세 계산기</a>
       <a class="nav__link${active === "models" ? " is-active" : ""}" href="./">모델별 시세</a>
       <a class="nav__link" href="../guide.html">판매 가이드</a>
@@ -94,7 +94,7 @@ const footer = `
         <a href="../faq.html">FAQ</a>
         <a href="../privacy.html">개인정보처리방침</a>
       </div>
-      <p>© ${THIS_YEAR} By B · 산출 결과는 참고용이에요. 실제 거래가와 다를 수 있어요.</p>
+      <p>© ${THIS_YEAR} 중고시세 · 산출 결과는 참고용이에요. 실제 거래가와 다를 수 있어요.</p>
     </footer>`;
 
 /* ---- 카테고리별 소개 문구 ---- */
@@ -145,7 +145,7 @@ function productPage(p) {
     },
     {
       q: `${p.name}을(를) 더 비싸게 팔려면 어떻게 하나요?`,
-      a: `무상보증이 남아 있으면 +5%, 정품 박스와 구성품이 온전하면 +3%의 프리미엄을 기대할 수 있어요. 판매 전 청소와 밝은 낮 사진 6장 이상이 기본입니다. 자세한 내용은 By B 판매 가이드를 참고하세요.`,
+      a: `무상보증이 남아 있으면 +5%, 정품 박스와 구성품이 온전하면 +3%의 프리미엄을 기대할 수 있어요. 판매 전 청소와 밝은 낮 사진 6장 이상이 기본입니다. 자세한 내용은 중고시세 판매 가이드를 참고하세요.`,
     },
   ];
 
@@ -155,7 +155,7 @@ function productPage(p) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "By B", item: `${SITE}/` },
+          { "@type": "ListItem", position: 1, name: "중고시세", item: `${SITE}/` },
           { "@type": "ListItem", position: 2, name: "모델별 시세", item: `${SITE}/price/` },
           { "@type": "ListItem", position: 3, name: p.name, item: url },
         ],
@@ -176,10 +176,10 @@ function productPage(p) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${p.name} 중고 가격 시세 (${THIS_YEAR}년) | By B</title>
+  <title>${p.name} 중고 가격 시세 (${THIS_YEAR}년) | 중고시세</title>
   <meta name="description" content="${THIS_YEAR}년 ${p.name} 중고 시세: A급 기준 약 ${won(nowA)}. 정률법 감가상각으로 계산한 연차별·상태별 적정 가격표와 판매 팁을 확인하세요." />
   <link rel="canonical" href="${url}" />
-  <meta property="og:title" content="${p.name} 중고 가격 시세 (${THIS_YEAR}년) | By B" />
+  <meta property="og:title" content="${p.name} 중고 가격 시세 (${THIS_YEAR}년) | 중고시세" />
   <meta property="og:description" content="A급 기준 약 ${won(nowA)} · 연차별/상태별 시세표 제공" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="${url}" />
@@ -253,10 +253,10 @@ function indexPage() {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>인기 모델별 중고 시세 모음 (${THIS_YEAR}년) | By B</title>
+  <title>인기 모델별 중고 시세 모음 (${THIS_YEAR}년) | 중고시세</title>
   <meta name="description" content="아이폰, 갤럭시, 맥북, 삼성·LG 냉장고와 세탁기까지. 인기 가전 ${products.length}개 모델의 ${THIS_YEAR}년 중고 시세를 정률법으로 계산했습니다." />
   <link rel="canonical" href="${SITE}/price/" />
-  <meta property="og:title" content="인기 모델별 중고 시세 모음 (${THIS_YEAR}년) | By B" />
+  <meta property="og:title" content="인기 모델별 중고 시세 모음 (${THIS_YEAR}년) | 중고시세" />
   <meta property="og:description" content="인기 가전 ${products.length}개 모델의 중고 시세를 한눈에." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${SITE}/price/" />
@@ -335,7 +335,7 @@ function rss() {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>By B · 중고 가전 시세 분석기</title>
+    <title>중고시세 · 중고 가전 시세 분석기</title>
     <link>${SITE}/</link>
     <description>정률법 기반 중고 가전 시세 계산기와 모델별 시세 정보</description>
     <language>ko</language>

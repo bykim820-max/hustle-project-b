@@ -1,5 +1,5 @@
 /* ============================================================
-   By B · Project Plan-B — core depreciation logic + UI (Toss style)
+   중고시세 · Project Plan-B — core depreciation logic + UI (Toss style)
    ============================================================ */
 
 /* ---- 1. Business constants ---- */
@@ -311,7 +311,7 @@ document.getElementById("share-btn").addEventListener("click", async () => {
   const url = location.href;
   const state = getFormState();
   const cat = CATEGORIES[state.catKey];
-  const title = `${cat.name} 중고 시세 — ${finalPriceEl.textContent}원 (By B)`;
+  const title = `${cat.name} 중고 시세 — ${finalPriceEl.textContent}원 (중고시세)`;
   track("share", { category: state.catKey });
 
   if (navigator.share) {
