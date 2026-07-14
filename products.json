@@ -27,6 +27,47 @@
     { "slug": "samsung-qled-65", "name": "삼성 QLED 65인치 TV", "cat": "tv", "price": 2190000, "year": 2023, "brand": "삼성" },
     { "slug": "lg-oled-65c3", "name": "LG 올레드 65인치 C3", "cat": "tv", "price": 3090000, "year": 2023, "brand": "LG" },
     { "slug": "ps5", "name": "플레이스테이션 5", "cat": "console", "price": 688000, "year": 2020, "brand": "소니" },
-    { "slug": "nintendo-switch-oled", "name": "닌텐도 스위치 OLED", "cat": "console", "price": 415000, "year": 2021, "brand": "닌텐도" }
+    { "slug": "nintendo-switch-oled", "name": "닌텐도 스위치 OLED", "cat": "console", "price": 415000, "year": 2021, "brand": "닌텐도" },
+
+    { "slug": "galaxy-s24-ultra", "name": "갤럭시 S24 울트라", "cat": "phone", "price": 1698400, "year": 2024, "brand": "삼성" },
+    { "slug": "iphone-16-pro", "name": "아이폰 16 프로", "cat": "phone", "price": 1550000, "year": 2024, "brand": "Apple" },
+    { "slug": "galaxy-z-fold5", "name": "갤럭시 Z 폴드5", "cat": "phone", "price": 1919600, "year": 2023, "brand": "삼성" },
+    { "slug": "iphone-13", "name": "아이폰 13", "cat": "phone", "price": 1090000, "year": 2021, "brand": "Apple" },
+    { "slug": "galaxy-a54", "name": "갤럭시 A54", "cat": "phone", "price": 519200, "year": 2023, "brand": "삼성" },
+
+    { "slug": "macbook-air-m3", "name": "맥북 에어 M3", "cat": "laptop", "price": 1790000, "year": 2024, "brand": "Apple" },
+    { "slug": "lg-gram-17", "name": "LG 그램 17", "cat": "laptop", "price": 2190000, "year": 2023, "brand": "LG" },
+    { "slug": "galaxy-book3-pro", "name": "갤럭시 북3 프로", "cat": "laptop", "price": 1899000, "year": 2023, "brand": "삼성" },
+
+    { "slug": "ipad-10", "name": "아이패드 10세대", "cat": "tablet", "price": 679000, "year": 2022, "brand": "Apple" },
+    { "slug": "galaxy-tab-s8", "name": "갤럭시 탭 S8", "cat": "tablet", "price": 979000, "year": 2022, "brand": "삼성" },
+
+    { "slug": "lg-dios-kimchi-tok", "name": "LG 디오스 김치톡톡", "cat": "fridge", "price": 1890000, "year": 2023, "brand": "LG" },
+    { "slug": "winia-dimchae", "name": "위니아 딤채 김치냉장고", "cat": "fridge", "price": 1590000, "year": 2023, "brand": "위니아" },
+    { "slug": "samsung-2door-400", "name": "삼성 일반 냉장고 400L", "cat": "fridge", "price": 799000, "year": 2022, "brand": "삼성" },
+
+    { "slug": "lg-washtower", "name": "LG 워시타워", "cat": "washer", "price": 2890000, "year": 2023, "brand": "LG" },
+    { "slug": "samsung-grande-ai-dryer", "name": "삼성 그랑데 AI 건조기", "cat": "washer", "price": 1590000, "year": 2023, "brand": "삼성" },
+    { "slug": "lg-mini-wash", "name": "LG 트롬 미니워시", "cat": "washer", "price": 690000, "year": 2022, "brand": "LG" },
+
+    { "slug": "samsung-windfree-wall", "name": "삼성 무풍 벽걸이 에어컨", "cat": "aircon", "price": 890000, "year": 2023, "brand": "삼성" },
+    { "slug": "lg-whisen-2in1", "name": "LG 휘센 2in1 에어컨", "cat": "aircon", "price": 2990000, "year": 2023, "brand": "LG" },
+
+    { "slug": "samsung-crystal-55", "name": "삼성 크리스탈 UHD 55인치", "cat": "tv", "price": 899000, "year": 2023, "brand": "삼성" },
+    { "slug": "lg-uhd-75", "name": "LG UHD 75인치", "cat": "tv", "price": 1790000, "year": 2023, "brand": "LG" },
+    { "slug": "samsung-oled-s90c", "name": "삼성 OLED 65인치 S90C", "cat": "tv", "price": 3290000, "year": 2023, "brand": "삼성" },
+
+    { "slug": "xbox-series-x", "name": "엑스박스 시리즈 X", "cat": "console", "price": 598000, "year": 2020, "brand": "마이크로소프트" },
+    { "slug": "nintendo-switch-2", "name": "닌텐도 스위치 2", "cat": "console", "price": 649800, "year": 2025, "brand": "닌텐도" },
+
+    { "slug": "lg-code-zero-a9", "name": "LG 코드제로 A9 무선청소기", "cat": "etc", "price": 890000, "year": 2023, "brand": "LG" },
+    { "slug": "samsung-bespoke-jet", "name": "삼성 비스포크 제트 청소기", "cat": "etc", "price": 990000, "year": 2023, "brand": "삼성" },
+    { "slug": "roborock-s8", "name": "로보락 S8 로봇청소기", "cat": "etc", "price": 1190000, "year": 2023, "brand": "로보락" },
+    { "slug": "lg-puricare-aero", "name": "LG 퓨리케어 에어로타워", "cat": "etc", "price": 690000, "year": 2023, "brand": "LG" },
+    { "slug": "samsung-bespoke-cube-air", "name": "삼성 비스포크 큐브 공기청정기", "cat": "etc", "price": 590000, "year": 2022, "brand": "삼성" },
+    { "slug": "lg-dios-dishwasher-12", "name": "LG 디오스 식기세척기 12인용", "cat": "etc", "price": 1190000, "year": 2023, "brand": "LG" },
+    { "slug": "lg-styler", "name": "LG 스타일러", "cat": "etc", "price": 1490000, "year": 2023, "brand": "LG" },
+    { "slug": "samsung-airdresser", "name": "삼성 에어드레서", "cat": "etc", "price": 1390000, "year": 2023, "brand": "삼성" },
+    { "slug": "dyson-airwrap", "name": "다이슨 에어랩", "cat": "etc", "price": 699000, "year": 2022, "brand": "다이슨" }
   ]
 }

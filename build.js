@@ -77,6 +77,11 @@ const ARTICLES = [
   { slug: "fridge-sell-checklist", title: "냉장고 중고로 팔 때 체크리스트", desc: "냄새·성에 제거부터 운반 문제까지 실전 정리" },
   { slug: "washer-sell-guide", title: "세탁기·건조기 중고 거래 가이드", desc: "통세척, 드럼 vs 통돌이, 분쟁 예방법" },
   { slug: "free-disposal-guide", title: "폐가전 무상수거 완전정리 (1599-0903)", desc: "무료 수거 대상, 신청 방법, 팔까 버릴까 기준" },
+  { slug: "moving-season-prep", title: "이사철 가전 정리, 4주 타임라인", desc: "D-4주 시세 파악부터 당일 수거까지 일정표" },
+  { slug: "platform-comparison", title: "당근 vs 번개장터 vs 중고나라 — 가전은 어디서 팔까?", desc: "품목별 플랫폼 유불리와 멀티 등록 전략" },
+  { slug: "tv-sell-guide", title: "TV 중고로 팔 때 알아야 할 것들", desc: "불량화소·번인 체크, 벽걸이 철거, 운반 요령" },
+  { slug: "reset-before-sell", title: "중고로 팔기 전 데이터 완전 삭제 가이드", desc: "폰·노트북·태블릿 기기별 초기화 순서" },
+  { slug: "buying-checklist", title: "중고 가전 사도 될까? 사기 전 체크리스트", desc: "피해야 할 매물 신호, 품목별 현장 확인 포인트" },
 ];
 
 const footer = `
