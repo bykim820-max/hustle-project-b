@@ -110,6 +110,58 @@ const CAT_INTRO = {
   etc: "생활가전은 위생 상태가 곧 가격이에요. 깨끗이 관리된 제품은 상한선 가격을 받을 수 있습니다.",
 };
 
+/* ---- 주간 시세 히스토리 (snapshot.js가 data/price-history.json에 축적) ---- */
+let HISTORY = {};
+try {
+  HISTORY = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "price-history.json"), "utf8")).models || {};
+} catch { /* 히스토리 없으면 추이 섹션 생략 */ }
+
+const TREND_WEEKS = 13; // 최근 3개월(13주)
+const TREND_MIN_POINTS = 3; // 이보다 적으면 섹션 미노출
+
+const dateLabel = (iso) => `${Number(iso.slice(5, 7))}월 ${Number(iso.slice(8, 10))}일`;
+
+/* A급 시세 추이 — 외부 의존성 없는 인라인 SVG 라인 차트 */
+function trendSection(p) {
+  const series = (HISTORY[p.slug] || []).slice(-TREND_WEEKS);
+  if (series.length < TREND_MIN_POINTS) return "";
+
+  const W = 640, H = 220, PL = 64, PR = 20, PT = 18, PB = 34;
+  const vals = series.map((s) => s.A);
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  const span = Math.max(hi - lo, hi * 0.02); // 변동이 거의 없어도 선이 붙지 않게
+  hi += span * 0.2;
+  lo = Math.max(lo - span * 0.2, 0);
+  const x = (i) => PL + (i * (W - PL - PR)) / (series.length - 1);
+  const y = (v) => PT + ((hi - v) * (H - PT - PB)) / (hi - lo);
+  const pts = series.map((s, i) => `${x(i).toFixed(1)},${y(s.A).toFixed(1)}`).join(" ");
+
+  const first = series[0], last = series[series.length - 1];
+  const diff = last.A - first.A;
+  const pct = ((diff / first.A) * 100).toFixed(1);
+  const manLabel = (v) => `${Math.round(v / 10000).toLocaleString("ko-KR")}만`;
+  const trendText =
+    diff === 0
+      ? `최근 ${series.length}주간 A급 시세는 ${won(last.A)} 수준을 유지하고 있어요.`
+      : `최근 ${series.length}주간 A급 시세는 ${won(first.A)}에서 ${won(last.A)}(으)로 약 ${Math.abs(pct)}% ${diff < 0 ? "내렸어요" : "올랐어요"}.`;
+
+  return `
+      <h2>최근 시세 추이</h2>
+      <p>${trendText} 매주 기록하는 주간 스냅샷 기준이라 표의 연 단위 시세와 조금 다를 수 있어요.</p>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${p.name} 최근 ${series.length}주 A급 시세 추이 그래프" style="width:100%;height:auto;">
+        <title>${p.name} A급 주간 시세 추이</title>
+        <line x1="${PL}" y1="${H - PB}" x2="${W - PR}" y2="${H - PB}" stroke="#e5e8eb" />
+        <text x="${PL - 8}" y="${y(hi) + 4}" text-anchor="end" font-size="11" fill="#8b95a1">${manLabel(hi)}</text>
+        <text x="${PL - 8}" y="${y(lo) + 4}" text-anchor="end" font-size="11" fill="#8b95a1">${manLabel(lo)}</text>
+        <polyline points="${pts}" fill="none" stroke="#00b8a2" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+        <circle cx="${x(0)}" cy="${y(first.A)}" r="3.5" fill="#ffffff" stroke="#00b8a2" stroke-width="2" />
+        <circle cx="${x(series.length - 1)}" cy="${y(last.A)}" r="4.5" fill="#00b8a2" />
+        <text x="${x(0)}" y="${H - PB + 18}" text-anchor="start" font-size="11" fill="#8b95a1">${dateLabel(first.date)}</text>
+        <text x="${x(series.length - 1)}" y="${H - PB + 18}" text-anchor="end" font-size="11" fill="#8b95a1">${dateLabel(last.date)}</text>
+      </svg>
+`;
+}
+
 /* ---- 빌드 시작 ---- */
 const { products } = JSON.parse(fs.readFileSync(path.join(__dirname, "products.json"), "utf8"));
 const outDir = path.join(__dirname, "price");
@@ -217,7 +269,7 @@ ${notesBlock}
       </table>
 
       <p class="callout">🧮 실제 구매 가격과 상태로 <a href="${deepLink}">내 ${p.name} 시세 정확히 계산하기</a></p>
-
+${trendSection(p)}
       <h2>자주 묻는 질문</h2>
       ${faq.map((f) => `<h3>${f.q}</h3>\n      <p>${f.a}</p>`).join("\n      ")}
 

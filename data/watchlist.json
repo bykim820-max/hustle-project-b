@@ -1,0 +1,25 @@
+{
+  "_comment": "월간 시세 확인 대상 (reminder.js가 리마인더 이슈 생성에 사용). 검색량 많은 모델 위주로 유지·교체.",
+  "slugs": [
+    "galaxy-z-fold5",
+    "galaxy-z-flip5",
+    "galaxy-s24-ultra",
+    "galaxy-s25",
+    "galaxy-s24",
+    "galaxy-s23",
+    "iphone-16",
+    "iphone-15-pro",
+    "iphone-15",
+    "iphone-14",
+    "lg-styler",
+    "lg-washtower",
+    "lg-tromm-dryer-20kg",
+    "samsung-grande-ai-dryer",
+    "samsung-bespoke-rf85",
+    "lg-dios-obje-4door",
+    "samsung-airdresser",
+    "samsung-bespoke-jet",
+    "lg-whisen-2in1",
+    "lg-oled-65c3"
+  ]
+}
