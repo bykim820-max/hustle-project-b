@@ -201,9 +201,22 @@ function productPage(p) {
     },
   ];
 
+  // 모델 고유 FAQ — 체크포인트 기반, 페이지마다 답변이 달라져 중복 콘텐츠를 줄여줌
+  if (Array.isArray(p.checks) && p.checks.length) {
+    faq.push({
+      q: `${p.name} 중고로 거래할 때 꼭 확인할 점은?`,
+      a: `${p.checks.map((c, i) => `${i + 1}) ${c}`).join(" ")} 이 세 가지를 사진이나 영상으로 확인하면 실패 없이 거래할 수 있어요.`,
+    });
+  }
+
   // 모델 고유 문단 (products.json의 notes) — 페이지 고유성 확보용
   const notesBlock = p.notes
     ? `\n      <h2>${p.name} 거래 포인트</h2>\n      <p>${p.notes}</p>\n`
+    : "";
+
+  // 모델별 체크포인트 리스트 — 시세를 가르는 실질 변수 (고유 콘텐츠)
+  const checksBlock = Array.isArray(p.checks) && p.checks.length
+    ? `\n      <h2>${p.name} 시세를 가르는 체크포인트</h2>\n      <p>같은 ${p.name}라도 아래 항목에 따라 실거래가가 크게 달라져요. 팔거나 살 때 먼저 확인하세요.</p>\n      <ul class="checks">\n        ${p.checks.map((c) => `<li>${c}</li>`).join("\n        ")}\n      </ul>\n`
     : "";
 
   const jsonLd = {
@@ -269,7 +282,7 @@ ${notesBlock}
       </table>
 
       <p class="callout">🧮 실제 구매 가격과 상태로 <a href="${deepLink}">내 ${p.name} 시세 정확히 계산하기</a></p>
-${trendSection(p)}
+${checksBlock}${trendSection(p)}
       <h2>자주 묻는 질문</h2>
       ${faq.map((f) => `<h3>${f.q}</h3>\n      <p>${f.a}</p>`).join("\n      ")}
 
