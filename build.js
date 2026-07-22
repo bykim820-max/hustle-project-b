@@ -270,7 +270,7 @@ ${nav("models")}
       <p class="callout">💰 <strong>${THIS_YEAR}년 현재 (${usedYears}년차) 적정 시세</strong><br />
       S급 ${won(nowS)} · <strong>A급 ${won(nowA)}</strong> · B급 ${won(nowB)}</p>
 
-      <p>${CAT_INTRO[p.cat]}</p>
+      <p>${p.intro || CAT_INTRO[p.cat]}</p>
 ${notesBlock}
       <h2>연차별·상태별 시세표</h2>
       <p>${cat.name}의 연간 감가율 ${ratePct}%를 적용한 상태 등급별 적정 가격이에요. 표의 가격은 출시가 기준이며, 실제 구매가를 알고 있다면 계산기에서 더 정확하게 확인할 수 있어요.</p>
