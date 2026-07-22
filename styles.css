@@ -101,6 +101,14 @@ body {
   color: var(--ink-sub);
   margin: 14px 0;
 }
+.prose .dateline {
+  margin: 8px 0 4px;
+  font-size: 13px;
+  color: var(--ink-sub);
+}
+.home-about {
+  margin-top: 28px;
+}
 .prose ul.checks {
   list-style: none;
   margin: 12px 0;

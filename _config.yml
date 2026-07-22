@@ -1,0 +1,14 @@
+# GitHub Pages(Jekyll) 빌드 설정
+# 공개 사이트(jungosise.com)에서 제외할 내부 문서·빌드 스크립트 목록.
+# 클라이언트에서 쓰는 app.js·styles.css·products.json 및 모든 .html은 그대로 배포됩니다.
+exclude:
+  - docs/
+  - hello.txt
+  - README.md
+  - PRODUCT.md
+  - DESIGN.md
+  - build.js
+  - snapshot.js
+  - reminder.js
+  - Gemfile
+  - Gemfile.lock

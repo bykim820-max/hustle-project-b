@@ -269,6 +269,7 @@ ${nav("models")}
     <article class="prose">
       <p class="callout">💰 <strong>${THIS_YEAR}년 현재 (${usedYears}년차) 적정 시세</strong><br />
       S급 ${won(nowS)} · <strong>A급 ${won(nowA)}</strong> · B급 ${won(nowB)}</p>
+      <p class="dateline">📅 ${TODAY} 기준 · 매주 시세 갱신</p>
 
       <p>${p.intro || CAT_INTRO[p.cat]}</p>
 ${notesBlock}
