@@ -116,6 +116,21 @@ try {
   HISTORY = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "price-history.json"), "utf8")).models || {};
 } catch { /* 히스토리 없으면 추이 섹션 생략 */ }
 
+/* ---- 실측 앵커 (snapshot.js가 반영, 여기선 페이지에 출처 표기용) ---- */
+let OBSERVED = {};
+try {
+  OBSERVED = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "observed.json"), "utf8"));
+} catch { /* 실측 파일 없으면 전부 모델 추정 표기 */ }
+
+/* 최근 스냅샷이 실측 기반인지 판정 */
+function observedInfo(slug) {
+  const series = HISTORY[slug] || [];
+  const latest = series[series.length - 1];
+  const obs = OBSERVED[slug];
+  const isObserved = !!(latest && latest.src === "observed" && obs && obs.A > 0);
+  return { isObserved, obs: isObserved ? obs : null };
+}
+
 const TREND_WEEKS = 13; // 최근 3개월(13주)
 const TREND_MIN_POINTS = 3; // 이보다 적으면 섹션 미노출
 
@@ -144,10 +159,13 @@ function trendSection(p) {
     diff === 0
       ? `최근 ${series.length}주간 A급 시세는 ${won(last.A)} 수준을 유지하고 있어요.`
       : `최근 ${series.length}주간 A급 시세는 ${won(first.A)}에서 ${won(last.A)}(으)로 약 ${Math.abs(pct)}% ${diff < 0 ? "내렸어요" : "올랐어요"}.`;
+  const observedNote = last.src === "observed"
+    ? " 가장 최근 값은 실측 거래가를 반영한 수치예요."
+    : " 매주 기록하는 주간 스냅샷 기준이라 표의 연 단위 시세와 조금 다를 수 있어요.";
 
   return `
       <h2>최근 시세 추이</h2>
-      <p>${trendText} 매주 기록하는 주간 스냅샷 기준이라 표의 연 단위 시세와 조금 다를 수 있어요.</p>
+      <p>${trendText}${observedNote}</p>
       <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${p.name} 최근 ${series.length}주 A급 시세 추이 그래프" style="width:100%;height:auto;">
         <title>${p.name} A급 주간 시세 추이</title>
         <line x1="${PL}" y1="${H - PB}" x2="${W - PR}" y2="${H - PB}" stroke="#e5e8eb" />
@@ -177,6 +195,10 @@ function productPage(p) {
   const nowS = calc(p.price, cat.rate, usedYears, GRADE.S);
   const nowB = calc(p.price, cat.rate, usedYears, GRADE.B);
   const ratePct = Math.round(cat.rate * 100);
+  const { isObserved, obs } = observedInfo(p.slug);
+  const sourceLine = isObserved
+    ? `🔎 <strong>실측 반영</strong> · ${obs.anchoredAt} 실측 거래가 기준으로 산정했어요${obs.note ? ` (${obs.note})` : ""}. 이후 시점은 감가율로 보정합니다.`
+    : `📅 ${TODAY} 기준 · 정률법 모델 추정값이에요. 실측 거래가가 확보되면 자동으로 반영됩니다. 매주 갱신.`;
   const url = `${SITE}/price/${p.slug}.html`;
   const deepLink = `../?c=${p.cat}&p=${p.price}&y=${usedYears}&g=A`;
 
@@ -269,7 +291,7 @@ ${nav("models")}
     <article class="prose">
       <p class="callout">💰 <strong>${THIS_YEAR}년 현재 (${usedYears}년차) 적정 시세</strong><br />
       S급 ${won(nowS)} · <strong>A급 ${won(nowA)}</strong> · B급 ${won(nowB)}</p>
-      <p class="dateline">📅 ${TODAY} 기준 · 매주 시세 갱신</p>
+      <p class="dateline${isObserved ? " dateline--observed" : ""}">${sourceLine}</p>
 
       <p>${p.intro || CAT_INTRO[p.cat]}</p>
 ${notesBlock}

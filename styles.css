@@ -106,6 +106,12 @@ body {
   font-size: 13px;
   color: var(--ink-sub);
 }
+.prose .dateline--observed {
+  padding: 10px 12px;
+  background: var(--mint-tint);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+}
 .home-about {
   margin-top: 28px;
 }

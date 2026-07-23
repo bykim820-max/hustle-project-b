@@ -1,3 +1,7 @@
 {
-  "_comment": "실측 앵커. 형식: \"<slug>\": { \"A\": A급가격, \"anchoredAt\": \"YYYY-MM-DD\", \"note\": \"출처 메모\" }. 앵커일 이후 감가율이 자동 적용되며, TTL(폰 8주·가전 24주 등)이 지나면 모델 계산으로 복귀함. 모델 slug는 products.json 참고."
+  "_comment": "실측 앵커. 실제로 확인한 중고 거래가를 여기에 넣으면 snapshot.js가 그 값에서 출발해 감가율을 적용하고(src=observed), 페이지에 '실측 반영 · 출처'가 표기됩니다. anchoredAt 이후 카테고리별 TTL(폰 8주·가전 24주 등)이 지나면 자동으로 모델 계산으로 복귀합니다. A는 A급 실측가(원), note에는 확인한 출처·조건을 적으세요. 모델 slug는 products.json 참고. 반드시 실제로 조회한 값만 넣을 것(지어내지 말 것).",
+  "_example": {
+    "iphone-15": { "A": 520000, "anchoredAt": "2026-07-22", "note": "민팃 A급 시세 조회 기준" },
+    "galaxy-s24-ultra": { "A": 780000, "anchoredAt": "2026-07-22", "note": "중고나라 최근 거래가 중앙값" }
+  }
 }

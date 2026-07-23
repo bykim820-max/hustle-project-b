@@ -10,5 +10,7 @@ exclude:
   - build.js
   - snapshot.js
   - reminder.js
+  - observe.js
+  - merge.js
   - Gemfile
   - Gemfile.lock
