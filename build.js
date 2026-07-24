@@ -336,16 +336,30 @@ function indexPage() {
   for (const p of products) (byCat[p.cat] = byCat[p.cat] || []).push(p);
 
   const sections = Object.entries(byCat)
-    .map(([catKey, list]) => {
+    .map(([catKey, list], idx) => {
       const cat = CATEGORIES[catKey];
+      let obsCount = 0;
       const items = list
         .map((p) => {
           const usedYears = Math.min(Math.max(THIS_YEAR - p.year, 0), 10);
-          const nowA = calc(p.price, cat.rate, usedYears, GRADE.A);
-          return `<li><a href="${p.slug}.html"><span><span class="more-links__name">${p.name}</span><span class="more-links__desc">${p.year}년 출시 · A급 약 ${won(nowA)}</span></span><span class="more-links__arrow">→</span></a></li>`;
+          const { isObserved, obs } = observedInfo(p.slug);
+          if (isObserved) obsCount++;
+          // 목록의 A급가는 상세 페이지와 동일하게 실측 앵커가 있으면 실측 기준
+          const nowA = isObserved ? floor100(obs.A * GRADE.A) : calc(p.price, cat.rate, usedYears, GRADE.A);
+          const tag = isObserved ? ` · <span class="obs-tag">🔎 실측</span>` : "";
+          return `<li><a href="${p.slug}.html"><span><span class="more-links__name">${p.name}</span><span class="more-links__desc">${p.year}년 출시 · A급 약 ${won(nowA)}${tag}</span></span><span class="more-links__arrow">→</span></a></li>`;
         })
-        .join("\n        ");
-      return `<h2 class="more-links__title" style="margin-top:32px;">${cat.emoji} ${cat.name}</h2>\n      <ul class="more-links__list" style="margin-top:12px;">\n        ${items}\n      </ul>`;
+        .join("\n          ");
+      const meta = `${list.length}개${obsCount ? ` · 실측 ${obsCount}` : ""}`;
+      return `<details class="cat-acc"${idx === 0 ? " open" : ""}>
+        <summary class="cat-acc__head">
+          <span class="cat-acc__title">${cat.emoji} ${cat.name}</span>
+          <span class="cat-acc__meta">${meta} <span class="cat-acc__chev" aria-hidden="true">▾</span></span>
+        </summary>
+        <ul class="more-links__list">
+          ${items}
+        </ul>
+      </details>`;
     })
     .join("\n      ");
 
@@ -370,7 +384,7 @@ ${nav("models")}
     <header class="page-hero">
       <span class="brand-chip">모델별 시세</span>
       <h1 class="title">인기 모델 중고 시세,<br />한눈에 보세요</h1>
-      <p class="subtitle">출시가와 연식 기준으로 미리 계산해 둔 ${products.length}개 모델이에요. 내 제품이 없다면 <a href="../">계산기</a>에서 직접 계산할 수 있어요.</p>
+      <p class="subtitle">미리 계산해 둔 ${products.length}개 모델이에요. 카테고리를 눌러 펼쳐 보세요. 내 제품이 없다면 <a href="../">계산기</a>에서 직접 계산할 수 있어요.</p>
     </header>
     <section class="prose">
       ${sections}

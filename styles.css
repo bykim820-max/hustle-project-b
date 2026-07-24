@@ -106,6 +106,39 @@ body {
   font-size: 13px;
   color: var(--ink-sub);
 }
+/* 모델 목록 카테고리 아코디언 */
+.cat-acc {
+  border-bottom: 1px solid #e5e8eb;
+}
+summary.cat-acc__head {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 6px;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--ink);
+}
+summary.cat-acc__head::-webkit-details-marker { display: none; }
+.cat-acc__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-sub);
+  white-space: nowrap;
+}
+.cat-acc__chev { transition: transform .2s ease; }
+.cat-acc[open] .cat-acc__chev { transform: rotate(180deg); }
+.cat-acc > .more-links__list { margin: 2px 0 14px; }
+.obs-tag { color: var(--mint, #00b8a2); font-weight: 600; }
+@media (prefers-color-scheme: dark) {
+  .cat-acc { border-color: rgba(255,255,255,.1); }
+}
 .prose .dateline--observed {
   padding: 10px 12px;
   background: var(--mint-tint);
