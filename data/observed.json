@@ -71,5 +71,30 @@
     "A": 454000,
     "anchoredAt": "2026-07-24",
     "note": "세티즌 중고시세 · 256GB 기준"
+  },
+  "ps5": {
+    "A": 500000,
+    "anchoredAt": "2026-07-24",
+    "note": "당근마켓 거래완료가 중앙값"
+  },
+  "nintendo-switch-oled": {
+    "A": 240000,
+    "anchoredAt": "2026-07-24",
+    "note": "당근마켓 거래완료가 중앙값"
+  },
+  "nintendo-switch-2": {
+    "A": 650000,
+    "anchoredAt": "2026-07-24",
+    "note": "당근마켓 거래완료가 중앙값"
+  },
+  "xbox-series-x": {
+    "A": 340000,
+    "anchoredAt": "2026-07-24",
+    "note": "당근마켓 거래완료가 중앙값"
+  },
+  "dyson-airwrap": {
+    "A": 280000,
+    "anchoredAt": "2026-07-24",
+    "note": "당근마켓 거래완료가 · 컴플리트 기준"
   }
 }
