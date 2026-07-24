@@ -191,11 +191,16 @@ function productPage(p) {
   const cat = CATEGORIES[p.cat];
   const age = Math.max(THIS_YEAR - p.year, 0);
   const usedYears = Math.min(Math.max(age, 0), 10);
-  const nowA = calc(p.price, cat.rate, usedYears, GRADE.A);
-  const nowS = calc(p.price, cat.rate, usedYears, GRADE.S);
-  const nowB = calc(p.price, cat.rate, usedYears, GRADE.B);
   const ratePct = Math.round(cat.rate * 100);
   const { isObserved, obs } = observedInfo(p.slug);
+  // 시세 산출: 실측 앵커가 있으면 실측 A급가를 '현재 연식'의 기준점으로 삼고
+  // 카테고리 감가율로 다른 연차를 산출(곡선 높이=실측, 기울기=모델). 없으면 출시가 기준 정률법.
+  const priceAt = (y, weight) => isObserved
+    ? floor100(Math.max(obs.A * Math.pow(1 - cat.rate, y - usedYears) * weight, p.price * FLOOR_RATE))
+    : calc(p.price, cat.rate, y, weight);
+  const nowA = priceAt(usedYears, GRADE.A);
+  const nowS = priceAt(usedYears, GRADE.S);
+  const nowB = priceAt(usedYears, GRADE.B);
   const sourceLine = isObserved
     ? `🔎 <strong>실측 반영</strong> · ${obs.anchoredAt} 실측 거래가 기준으로 산정했어요${obs.note ? ` (${obs.note})` : ""}. 이후 시점은 감가율로 보정합니다.`
     : `📅 ${TODAY} 기준 · 정률법 모델 추정값이에요. 실측 거래가가 확보되면 자동으로 반영됩니다. 매주 갱신.`;
@@ -203,9 +208,10 @@ function productPage(p) {
   const deepLink = `../?c=${p.cat}&p=${p.price}&y=${usedYears}&g=A`;
 
   const tableRows = YEARS_ROWS.map((y) => {
+    const isNow = y === usedYears;
     const label = y === 0 ? "미개봉" : `${y}년 사용`;
-    const mark = y === usedYears ? " class=\"is-now\"" : "";
-    return `<tr${mark}><td>${label}${y === usedYears ? " (현재 연식)" : ""}</td><td>${won(calc(p.price, cat.rate, y, GRADE.S))}</td><td>${won(calc(p.price, cat.rate, y, GRADE.A))}</td><td>${won(calc(p.price, cat.rate, y, GRADE.B))}</td></tr>`;
+    const mark = isNow ? " class=\"is-now\"" : "";
+    return `<tr${mark}><td>${label}${isNow ? " (현재 연식)" : ""}</td><td>${won(priceAt(y, GRADE.S))}</td><td>${won(priceAt(y, GRADE.A))}</td><td>${won(priceAt(y, GRADE.B))}</td></tr>`;
   }).join("\n          ");
 
   const faq = [
@@ -296,7 +302,9 @@ ${nav("models")}
       <p>${p.intro || CAT_INTRO[p.cat]}</p>
 ${notesBlock}
       <h2>연차별·상태별 시세표</h2>
-      <p>${cat.name}의 연간 감가율 ${ratePct}%를 적용한 상태 등급별 적정 가격이에요. 표의 가격은 출시가 기준이며, 실제 구매가를 알고 있다면 계산기에서 더 정확하게 확인할 수 있어요.</p>
+      <p>${isObserved
+        ? `<strong>현재 연식의 실측 시세를 기준점</strong>으로 ${cat.name}의 연간 감가율 ${ratePct}%를 적용해 연차별로 환산한 값이에요`
+        : `${cat.name}의 연간 감가율 ${ratePct}%를 적용한 상태 등급별 적정 가격이에요. 표의 가격은 출시가 기준 정률법 추정이에요`}. 실제 구매가를 알고 있다면 계산기에서 더 정확하게 확인할 수 있어요.</p>
       <table>
         <thead><tr><th>사용 기간</th><th>S급 (미개봉급)</th><th>A급 (기스 없음)</th><th>B급 (사용감)</th></tr></thead>
         <tbody>
